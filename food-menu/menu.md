@@ -59,14 +59,14 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 | lemon | Lemon | 1 pc | 5.00 | Fruit & veg |
 | butter | Lurpak butter | 200 g | 22.95 | Dairy & eggs |
 | rootmix | Root vegetable mix (rodfrugt) | 1 kg bag | 20.00 | Fruit & veg |
-| marjoram | Dried marjoram | 8 g jar | 12.00 | Spices |
-| caraway | Ground caraway | 20 g jar | 12.00 | Spices |
-| sausage | Pork sausages (wienerpølser, 90%+ meat) | 250 g | 25.00 | Meat |
-| tompaste | Tomato paste | 140 g tube | 8.00 | Pantry |
-| stock | Chicken stock cubes | 6 cubes (500 ml each) | 15.00 | Pantry |
-| sunoil | Sunflower oil | 1 l bottle | 20.00 | Pantry |
+| marjoram | Dried marjoram (Santa Maria) | 8 g jar | 27.25 | Spices |
+| caraway | Caraway (Santa Maria) | 20 g jar | 21.95 | Spices |
+| sausage | REMA 1000 wienerpølser (frilandsgris) | 375 g | 29.95 | Meat |
+| tompaste | REMA 1000 organic tomato paste | 200 g | 12.95 | Pantry |
+| stock | REMA 1000 chicken stock cubes | 10 cubes (100 g) | 4.98 | Pantry |
+| sunoil | REMA 1000 sunflower oil | 1 l bottle | 19.09 | Pantry |
 | paprika | Sweet paprika | 40 g jar | 12.00 | Spices |
-| parsley | Fresh flat-leaf parsley | 1 pot | 15.00 | Fruit & veg |
+| parsley | Fresh parsley | 1 bunch | 10.00 | Fruit & veg |
 
 ## Breakfast
 
@@ -341,11 +341,11 @@ Method:
 ### Bramboračka
 
 - Key: bramboracka
-- Price: 8.18
+- Price: 9.78
 - Description: Czech potato soup with root vegetables, a splash of cream, garlic, marjoram and caraway
 - Nutrition: 350 kcal, 6 g protein, 49 g carbs, 15 g fat
 - Nutrition note: A light dinner on its own; add bread to make it more filling.
-- Batch note: One pot makes 3 portions. Amounts are for one portion, with the whole pot in brackets. Marjoram and caraway prices are estimates.
+- Batch note: One pot makes 3 portions. Amounts are for one portion, with the whole pot in brackets.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
@@ -356,8 +356,8 @@ Method:
 | potato | ~200 g (pot 5 potatoes, ~600 g) | 1.80 |  |  |
 | cream | 25 ml (pot 75 ml) | 1.60 |  |  |
 | garlic | ⅔ clove (pot 2 cloves) | 0.24 |  |  |
-| marjoram | ½ tbsp (pot 1½ tbsp) | 1.00 |  |  |
-| caraway | ⅓ tsp (pot 1 tsp) | 0.40 |  |  |
+| marjoram | ½ tbsp (pot 1½ tbsp) | 2.27 |  |  |
+| caraway | ⅓ tsp (pot 1 tsp) | 0.73 |  |  |
 
 Method:
 
@@ -371,27 +371,27 @@ Method:
 ### Frankfurtská polévka
 
 - Key: frankfurtska
-- Price: 17.88
+- Price: 14.44
 - Description: Czech sausage and potato soup with onion, paprika, tomato and marjoram, thickened with a butter roux
 - Nutrition: 690 kcal, 15 g protein, 42 g carbs, 51 g fat
 - Nutrition note: Counts all 4 tbsp of oil from the recipe; using less cuts the fat a lot.
-- Batch note: From the Rohlík recipe. One pot makes 2 portions. Amounts are for one portion, with the whole pot in brackets. Prices of the new items are estimates.
+- Batch note: From the Rohlík recipe. One pot makes 2 portions. Amounts are for one portion, with the whole pot in brackets. Sweet paprika's price is an estimate; the rest are online prices, mostly REMA 1000.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| sausage | 75 g (pot 150 g) | 7.50 |  |  |
+| sausage | 75 g (pot 150 g) | 5.99 |  |  |
 | potato | ~175 g (pot 350 g, waxy) | 1.58 |  |  |
 | onion | ½ onion (pot 1, ~150 g) | 1.40 |  |  |
 | garlic | ½ clove (pot 1 clove) | 0.18 |  |  |
-| tompaste | ½ tbsp (pot 1 tbsp) | 0.43 |  |  |
-| stock | 400 ml (pot 800 ml, or water) | 2.00 |  |  |
-| sunoil | 2 tbsp (pot 4 tbsp) | 0.60 |  |  |
+| tompaste | ½ tbsp (pot 1 tbsp) | 0.49 |  |  |
+| stock | 400 ml (pot 800 ml, or water) | 0.40 |  |  |
+| sunoil | 2 tbsp (pot 4 tbsp) | 0.57 |  |  |
 | butter | ~7 g (pot 15 g) | 0.80 |  |  |
 | flour | ½ tbsp (pot 1 tbsp) | 0.02 |  |  |
 | paprika | ½ tsp (pot 1 tsp) | 0.38 |  |  |
-| marjoram | ½ tsp (pot 1 tsp) | 0.38 |  |  |
+| marjoram | ½ tsp (pot 1 tsp) | 0.85 |  |  |
 | salt + pepper | to taste | 0.11 | 0.01 | Salt & pepper |
-| parsley | 1½ tbsp chopped (pot 3 tbsp, optional) | 2.50 |  |  |
+| parsley | 1½ tbsp chopped (pot 3 tbsp, optional) | 1.67 |  |  |
 
 Method:
 
