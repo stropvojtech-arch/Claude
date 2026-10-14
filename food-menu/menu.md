@@ -14,10 +14,10 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 
 | Key | Product | Pack | Pack price | Aisle |
 |---|---|---|--:|---|
-| yogurt | Thise organic Greek-style yogurt 10% | 1 kg tub | 40.00 | Dairy & eggs |
+| yogurt | Thise organic Greek-style yogurt 10% | 1 kg tub | 39.95 | Dairy & eggs |
 | banana | Banana | 1 pc | 2.75 | Fruit & veg |
-| honey | Honey | 425 g jar | 19.25 | Pantry |
-| cereal | Choco granola (Änglamark) | 500 g box | 35.00 | Pantry |
+| honey | Danish honey | 425 g jar | 37.95 | Pantry |
+| cereal | Organic crunchy müsli | 500 g box | 39.95 | Pantry |
 | baguette | Irma organic sourdough baguette (frozen) | 400 g | 25.00 | Bakery |
 | mayo | Hellmann's Real mayonnaise | 400 g jar | 30.00 | Pantry |
 | cheese | Sliced Gouda 28–30% | 200 g (~10 slices) | 22.00 | Dairy & eggs |
@@ -42,24 +42,23 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 | oyster | Oyster sauce | 225 g | 16.00 | Pantry |
 | eggs | Eggs | 10 pcs | 19.00 | Dairy & eggs |
 | carrot | Carrots | 1 bag | 14.00 | Fruit & veg |
-| chicken | Chicken breast | 650 g | 64.95 | Meat |
+| chicken | Chicken breast | 600 g | 54.95 | Meat |
 | rice | Rice | 1 kg | 18.00 | Pantry |
 | lettuce | Lettuce | 1 head | 12.00 | Fruit & veg |
 | cabbage | Cabbage | 1 head | 20.00 | Fruit & veg |
 | broccoli | Broccoli | 1 head | 15.00 | Fruit & veg |
-| onion | Onions | 5 pcs | 12.00 | Fruit & veg |
+| onion | Organic onions | 750 g (~5 pcs) | 14.00 | Fruit & veg |
 | spinach | Spinach | 1 bag | 11.00 | Fruit & veg |
-| cream | Heavy cream | 250 ml | 16.00 | Dairy & eggs |
+| cream | Organic whipping cream 38% | 250 ml | 15.95 | Dairy & eggs |
 | beef | Ground beef | 400 g | 44.95 | Meat |
 | buns | Burger buns | 6 pcs | 14.50 | Bakery |
-| cucumber | Cucumber | 1 pc | 10.00 | Fruit & veg |
+| cucumber | Organic cucumber | 1 pc | 13.00 | Fruit & veg |
 | ketchup | Ketchup | 1 kg | 17.00 | Pantry |
 | potato | Potatoes | 2 kg bag | 18.00 | Fruit & veg |
 | crumbs | Breadcrumbs | 500 g | 7.50 | Pantry |
 | lemon | Lemon | 1 pc | 5.00 | Fruit & veg |
-| butter | Butter | 250 g | 25.00 | Dairy & eggs |
-| parsnip | Parsnip (or parsley root) | 500 g bag | 15.00 | Fruit & veg |
-| celeriac | Celeriac | 1 pc (~700 g) | 15.00 | Fruit & veg |
+| butter | Lurpak butter | 200 g | 22.95 | Dairy & eggs |
+| rootmix | Root vegetable mix (rodfrugt) | 1 kg bag | 20.00 | Fruit & veg |
 | marjoram | Dried marjoram | 8 g jar | 12.00 | Spices |
 | caraway | Ground caraway | 20 g jar | 12.00 | Spices |
 | sausage | Pork sausages (wienerpølser, 90%+ meat) | 250 g | 25.00 | Meat |
@@ -76,24 +75,24 @@ Hours: Mornings
 ### Yogurt Bowl
 
 - Key: yogurt
-- Price: 22.25
-- Description: Thick Thise 10% Greek-style yogurt, sliced banana, honey and crunchy chocolate granola
+- Price: 24.88
+- Description: Thick Thise 10% Greek-style yogurt, sliced banana, honey and crunchy organic müsli
 - Nutrition: 1000 kcal, 33 g protein, 121 g carbs, 44 g fat
-- Nutrition note: Yogurt (Thise 10%) and granola values are from their labels.
+- Nutrition note: Yogurt (Thise 10%) values are from its label. Müsli values are still from the old chocolate granola and may differ a little.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| yogurt | 300 g | 12.00 |  |  |
+| yogurt | 300 g | 11.99 |  |  |
 | banana | 1 pc | 2.75 |  |  |
-| honey | 2 tbsp | 1.90 |  |  |
-| cereal | 80 g | 5.60 |  |  |
+| honey | 2 tbsp | 3.75 |  |  |
+| cereal | 80 g | 6.39 |  |  |
 
 Method:
 
 1. Scoop the yogurt into a clean bowl.
 2. Add 2 tablespoons of honey.
 3. Slice the banana into the bowl.
-4. Pour the granola on top.
+4. Pour the müsli on top.
 5. Mix it all together.
 
 ## Lunch
@@ -214,14 +213,14 @@ Method:
 ### Thai Stir-fry
 
 - Key: thai
-- Price: 43.40
+- Price: 42.15
 - Description: Garlic-soy beef or chicken with broccoli and carrot, rice and cabbage
 - Nutrition: 880 kcal, 58 g protein, 156 g carbs, 5 g fat
 - Nutrition note: With chicken; beef adds about 150 kcal and 15 g fat. Frying oil not included.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| chicken | 150 g | 14.99 |  | Beef or chicken |
+| chicken | 150 g | 13.74 |  | Beef or chicken |
 | rice | 120 g | 2.16 |  |  |
 | cabbage | ½ head | 10.00 | 0.5 |  |
 | carrot | ½ bag (rest isn't used) | 7.00 | 0.5 |  |
@@ -241,18 +240,18 @@ Method:
 ### Creamy Spinach Pasta
 
 - Key: spinach
-- Price: 23.53
+- Price: 23.71
 - Description: Pasta in cream with spinach, onion, garlic and parmesan
 - Nutrition: 930 kcal, 26 g protein, 89 g carbs, 54 g fat
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
 | pasta | 100 g | 1.00 |  |  |
-| onion | ½ onion | 1.20 |  |  |
+| onion | ½ onion | 1.40 |  |  |
 | garlic | 1 clove | 1.00 | 0.025 |  |
 | parm | 20 g | 4.00 |  |  |
 | spinach | ½ bag | 6.00 |  |  |
-| cream | 125 ml | 8.00 |  |  |
+| cream | 125 ml | 7.98 |  |  |
 | oregano | 1 tsp | 1.00 | 0.04 |  |
 | salt + pepper | to taste | 0.11 | 0.01 | Salt & pepper |
 
@@ -267,7 +266,7 @@ Method:
 ### Beef Burger & Wedges
 
 - Key: burger
-- Price: 34.56
+- Price: 36.06
 - Description: Two 100 g beef burgers with cucumber and ketchup, and potato wedges
 - Nutrition: 970 kcal, 53 g protein, 97 g carbs, 41 g fat
 - Nutrition note: Includes ~1 tbsp oil for the wedges.
@@ -276,7 +275,7 @@ Method:
 |---|---|--:|--:|---|
 | beef | 200 g | 22.48 |  |  |
 | buns | 2 buns | 4.83 |  |  |
-| cucumber | ½ cucumber | 5.00 |  |  |
+| cucumber | ½ cucumber | 6.50 |  |  |
 | ketchup | 1 tbsp | 0.34 |  |  |
 | potato | 200 g | 1.80 |  |  |
 | salt + pepper | to taste | 0.11 | 0.01 | Salt & pepper |
@@ -292,19 +291,19 @@ Method:
 ### Chicken Schnitzel
 
 - Key: schnitzel
-- Price: 45.93
+- Price: 44.93
 - Description: Breaded chicken with boiled potatoes, cucumber and lemon
 - Nutrition: 1360 kcal, 98 g protein, 171 g carbs, 29 g fat
 - Nutrition note: Includes ~15 g frying oil soaked up by the breading.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| chicken | 300 g | 29.98 |  |  |
+| chicken | 300 g | 27.48 |  |  |
 | potato | 600 g | 5.40 |  |  |
 | crumbs | ~60 g | 0.90 |  |  |
 | eggs | 1 egg | 1.90 |  |  |
 | flour | 30 g | 0.15 |  |  |
-| cucumber | ½ cucumber | 5.00 |  |  |
+| cucumber | ½ cucumber | 6.50 |  |  |
 | lemon | ½ lemon | 2.50 |  |  |
 | salt + pepper | to taste | 0.11 | 0.01 | Salt & pepper |
 
@@ -319,14 +318,14 @@ Method:
 ### Kuře s mozzarelou
 
 - Key: kure
-- Price: 31.12
+- Price: 29.46
 - Description: Chicken baked under melted mozzarella, with roast potatoes
 - Nutrition: 1050 kcal, 64 g protein, 52 g carbs, 66 g fat
 - Nutrition note: Counts all 50 ml olive oil; less if some stays in the pan.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| chicken | 200 g | 19.98 |  |  |
+| chicken | 200 g | 18.32 |  |  |
 | mozz | ½ ball | 3.98 |  |  |
 | salt + pepper | to taste | 0.11 | 0.01 | Salt & pepper |
 | oil | 50 ml | 4.35 |  |  |
@@ -342,20 +341,18 @@ Method:
 ### Bramboračka
 
 - Key: bramboracka
-- Price: 8.07
+- Price: 8.18
 - Description: Czech potato soup with root vegetables, a splash of cream, garlic, marjoram and caraway
 - Nutrition: 350 kcal, 6 g protein, 49 g carbs, 15 g fat
 - Nutrition note: A light dinner on its own; add bread to make it more filling.
-- Batch note: One pot makes 3 portions. Amounts are for one portion, with the whole pot in brackets. Prices of the new items (butter, parsnip, celeriac, marjoram, caraway) are estimates.
+- Batch note: One pot makes 3 portions. Amounts are for one portion, with the whole pot in brackets. Marjoram and caraway prices are estimates.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| butter | ~7 g (pot ~20 g, a knob) | 0.70 |  |  |
-| carrot | ⅓ carrot (pot 1 carrot) | 0.32 |  |  |
-| parsnip | ~25 g (pot 1 small parsnip) | 0.70 |  |  |
-| celeriac | ~25 g (pot ~70 g) | 0.50 |  |  |
+| butter | ~7 g (pot ~20 g, a knob) | 0.80 |  |  |
+| rootmix | ~70 g (pot 1 cereal bowl, ~200 g) | 1.40 |  |  |
 | salt | a pinch | 0.01 |  |  |
-| onion | ⅓ onion (pot 1 onion) | 0.80 |  |  |
+| onion | ⅓ onion (pot 1 onion) | 0.93 |  |  |
 | potato | ~200 g (pot 5 potatoes, ~600 g) | 1.80 |  |  |
 | cream | 25 ml (pot 75 ml) | 1.60 |  |  |
 | garlic | ⅔ clove (pot 2 cloves) | 0.24 |  |  |
@@ -364,7 +361,7 @@ Method:
 
 Method:
 
-1. Dice the carrot, parsnip and celeriac. Together they fill about one cereal bowl.
+1. Dice about one cereal bowl of the root vegetable mix (carrot, parsnip or parsley root, celeriac).
 2. Melt the butter in a large pot. Add the root vegetables and a pinch of salt and soften for about 5 min.
 3. Add the chopped onion and 1 diced potato, then pour in water to cover well (about 1.25 l) and bring to a boil.
 4. Add the other 4 potatoes, diced, and simmer about 20 min until everything is soft.
@@ -374,7 +371,7 @@ Method:
 ### Frankfurtská polévka
 
 - Key: frankfurtska
-- Price: 17.63
+- Price: 17.88
 - Description: Czech sausage and potato soup with onion, paprika, tomato and marjoram, thickened with a butter roux
 - Nutrition: 690 kcal, 15 g protein, 42 g carbs, 51 g fat
 - Nutrition note: Counts all 4 tbsp of oil from the recipe; using less cuts the fat a lot.
@@ -384,12 +381,12 @@ Method:
 |---|---|--:|--:|---|
 | sausage | 75 g (pot 150 g) | 7.50 |  |  |
 | potato | ~175 g (pot 350 g, waxy) | 1.58 |  |  |
-| onion | ½ onion (pot 1, ~120 g) | 1.20 |  |  |
+| onion | ½ onion (pot 1, ~150 g) | 1.40 |  |  |
 | garlic | ½ clove (pot 1 clove) | 0.18 |  |  |
 | tompaste | ½ tbsp (pot 1 tbsp) | 0.43 |  |  |
 | stock | 400 ml (pot 800 ml, or water) | 2.00 |  |  |
 | sunoil | 2 tbsp (pot 4 tbsp) | 0.60 |  |  |
-| butter | ~7 g (pot 15 g) | 0.75 |  |  |
+| butter | ~7 g (pot 15 g) | 0.80 |  |  |
 | flour | ½ tbsp (pot 1 tbsp) | 0.02 |  |  |
 | paprika | ½ tsp (pot 1 tsp) | 0.38 |  |  |
 | marjoram | ½ tsp (pot 1 tsp) | 0.38 |  |  |
