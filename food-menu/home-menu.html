@@ -1,0 +1,765 @@
+<title>Food Menu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=Jost:wght@300;400;500&display=swap">
+<style>
+/* Layout: two full-screen panels side by side; the menu card is page 1, the shopping list is page 2, reached by swiping. */
+:root{
+  --paper:#EDF0EA; --card:#F7F8F4; --ink:#1B231E; --muted:#5D6A61; --rule:#C6CFC6;
+  --accent:#2E5B45; --brass:#9A7428; --have:#E1E7DF;
+  --display:"Bodoni Moda","Didot","Bodoni 72",Georgia,serif;
+  --body:"Jost","Avenir Next","Futura",system-ui,sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --paper:#121815; --card:#1A221E; --ink:#E5EAE2; --muted:#93A096; --rule:#2D3832;
+  --accent:#8DBFA2; --brass:#CFA95B; --have:#202A25; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --paper:#121815; --card:#1A221E; --ink:#E5EAE2; --muted:#93A096; --rule:#2D3832;
+  --accent:#8DBFA2; --brass:#CFA95B; --have:#202A25; color-scheme:dark}
+
+html,body{height:100%;overflow:hidden}
+body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer;padding:0}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+
+.viewport{height:100%;overflow:hidden}
+.track{display:flex;width:200%;height:100%;will-change:transform}
+.panel{width:50%;height:100%;overflow-y:auto;overflow-x:hidden;touch-action:pan-y;-webkit-overflow-scrolling:touch}
+.inner{max-width:560px;margin:0 auto;padding-inline:20px;padding-block:28px 40px}
+
+/* ---------- Menu card ---------- */
+.mast{text-align:center;padding-block:18px 8px}
+.mast .est{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted)}
+.mast h1{font-family:var(--display);font-weight:500;font-size:clamp(40px,12vw,58px);line-height:1;margin:10px 0 6px;letter-spacing:-.01em}
+.mast h1 i{font-weight:400}
+.mast .tag{font-family:var(--display);font-style:italic;color:var(--muted);font-size:16px}
+.orn{display:flex;align-items:center;gap:12px;color:var(--brass);margin:22px auto 6px;max-width:220px}
+.orn::before,.orn::after{content:"";flex:1;height:1px;background:var(--brass);opacity:.6}
+
+.section{margin-top:30px}
+.section h2{font-family:var(--display);font-weight:400;font-style:italic;font-size:28px;text-align:center;margin:0 0 4px}
+.section .hours{text-align:center;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);margin-bottom:14px}
+.dish{display:block;width:100%;text-align:left;padding-block:13px;border-top:1px solid var(--rule)}
+.dish:last-child{border-bottom:1px solid var(--rule)}
+.dish .row{display:flex;align-items:baseline;gap:8px}
+.dish .nm{font-family:var(--display);font-size:20px;font-weight:500;letter-spacing:.005em}
+.dish .lead{flex:1;border-bottom:1px dotted var(--muted);opacity:.5;transform:translateY(-4px);min-width:16px}
+.dish .pr{font-family:var(--display);font-size:18px;font-variant-numeric:tabular-nums lining-nums}
+.dish .ds{color:var(--muted);font-weight:300;font-size:14.5px;margin-top:2px;padding-right:56px}
+.foot{text-align:center;margin-top:34px;color:var(--muted);font-size:12px;letter-spacing:.06em}
+.dish .pr small{font-size:.62em;letter-spacing:.08em;color:var(--muted)}
+.foot .snacks{font:inherit;letter-spacing:inherit;color:inherit;padding:4px 8px}
+.snack-list .row{display:flex;align-items:baseline;gap:8px;padding-block:12px;border-bottom:1px solid var(--rule)}
+.snack-list .nm{font-family:var(--display);font-size:20px;font-weight:500}
+.snack-list .lead{flex:1;border-bottom:1px dotted var(--muted);opacity:.5;transform:translateY(-4px);min-width:16px}
+.snack-list .pr{font-family:var(--display);font-size:18px;font-variant-numeric:tabular-nums lining-nums}
+.snack-list .pr small{font-size:.62em;letter-spacing:.08em;color:var(--muted)}
+.foot .seal{display:inline-block;margin-top:14px;color:var(--brass);font-family:var(--display);font-size:18px;opacity:.75;padding:6px 10px}
+
+/* ---------- Dish sheet ---------- */
+.scrim{position:fixed;inset:0;background:rgba(20,16,0,.45);opacity:0;pointer-events:none;transition:opacity .25s;z-index:10}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-height:88%;overflow-y:auto;background:var(--card);border-radius:18px 18px 0 0;z-index:11;
+  transform:translateY(105%);transition:transform .32s cubic-bezier(.2,.8,.2,1);padding:10px 22px calc(28px + env(safe-area-inset-bottom,0px))}
+.sheet.on{transform:none}
+.sheet .grip{width:40px;height:4px;border-radius:2px;background:var(--rule);margin:0 auto 14px}
+.sheet .x{position:absolute;top:12px;right:14px;font-size:22px;color:var(--muted);width:36px;height:36px}
+.sheet h3{font-family:var(--display);font-weight:500;font-size:30px;line-height:1.1;margin:4px 40px 6px 0;text-wrap:balance}
+.sheet .sd{color:var(--muted);font-weight:300;margin:0 0 16px}
+.sheet h4{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);font-weight:500;margin:22px 0 8px}
+.ing{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+.ing td{padding:7px 0;border-bottom:1px solid var(--rule);vertical-align:top}
+.ing td.q{color:var(--muted);width:38%;padding-right:10px}
+.ing td.c{text-align:right;color:var(--muted);white-space:nowrap;padding-left:8px}
+.ing tr.tot td{border-bottom:0;font-weight:500;color:var(--ink);padding-top:10px}
+.steps{margin:0;padding-left:22px}
+.steps li{margin-bottom:8px;padding-left:4px}
+.steps li::marker{font-family:var(--display);color:var(--brass)}
+.nut{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.nut div{background:var(--paper);border:1px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center}
+.nut b{display:block;font-family:var(--display);font-weight:500;font-size:19px;font-variant-numeric:lining-nums}
+.nut small{display:block;font-size:11px;letter-spacing:.06em;color:var(--muted)}
+/* ---------- Day plan (double-tap meals) ---------- */
+.srow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--rule)}
+.srow .sn{flex:1;min-width:0}
+.srow .sn small{display:block;color:var(--muted);font-size:12.5px;line-height:1.4}
+.srow.on .step,.dm .step{border-color:var(--accent)}
+.dm .srow2{display:flex;align-items:center;gap:12px}
+.dish{position:relative;transition:background .2s}
+.dish.picked{background:color-mix(in srgb,var(--accent) 10%,transparent);border-radius:10px;padding-inline:10px;margin-inline:-10px;width:calc(100% + 20px)}
+.dish.picked .nm::before{content:"✓ ";color:var(--accent);font-family:var(--body);font-size:16px}
+.daybar{position:sticky;bottom:12px;margin-top:22px;width:100%;text-align:left;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;box-shadow:0 6px 20px rgba(0,0,0,.12);z-index:2}
+.daybar .sum{flex:1;font-size:13px;color:var(--muted)}
+.daybar .sum b,.daybar .pr2 b{display:block;font-size:20px;color:var(--ink);font-family:var(--display);font-weight:500;font-variant-numeric:tabular-nums lining-nums}
+.daybar .pr2{text-align:right;font-size:13px;color:var(--muted);white-space:nowrap}
+.daybar .chev{color:var(--muted);font-size:14px;transition:transform .3s}
+.dayhint{text-align:center;font-size:12px;color:var(--muted);margin-top:10px;font-style:italic}
+.dayview{position:fixed;inset:0;z-index:12;background:var(--paper);overflow-y:auto;transform:translateY(100%);transition:transform .34s cubic-bezier(.2,.8,.2,1);visibility:hidden}
+.dayview.on{transform:none;visibility:visible}
+.dayview .inner{padding-top:calc(16px + env(safe-area-inset-top,0px))}
+.dayview .daybar{position:sticky;top:12px;bottom:auto;margin:0 0 6px}
+.dayview .daybar .chev{transform:rotate(180deg)}
+.macros4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:14px 0 4px}
+.macros4 div{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center}
+.macros4 b{display:block;font-family:var(--display);font-weight:500;font-size:19px}
+.macros4 small{font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.dm{padding:14px 0;border-bottom:1px solid var(--rule)}
+.dm .row{display:flex;align-items:baseline;gap:8px}
+.dm .nm{font-family:var(--display);font-size:20px;font-weight:500}
+.dm .lead{flex:1;border-bottom:1px dotted var(--muted);opacity:.5;transform:translateY(-4px);min-width:16px}
+.dm .pr{font-family:var(--display);font-size:18px;font-variant-numeric:tabular-nums lining-nums}
+.dm .ds{color:var(--muted);font-weight:300;font-size:14.5px;margin-top:2px}
+.dm .mx{font-size:12.5px;color:var(--muted);margin-top:4px;font-variant-numeric:tabular-nums}
+.dm .rm{font-size:12.5px;color:#B0412E;margin-top:6px;padding:4px 0}
+.note{font-size:13px;color:var(--muted);margin-top:14px;font-style:italic}
+
+/* ---------- Shopping panel ---------- */
+.shop .inner{padding-bottom:120px}
+.shop-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.shop-head h2{font-family:var(--display);font-weight:500;font-size:34px;margin:0}
+.back{font-size:13px;color:var(--muted);letter-spacing:.04em;padding:6px 0}
+.tabs{display:flex;gap:4px;background:var(--have);border-radius:999px;padding:4px;margin:16px 0 6px}
+.tabs button{flex:1;padding:8px 0;border-radius:999px;font-size:14px;color:var(--muted)}
+.tabs button[aria-pressed="true"]{background:var(--card);color:var(--ink);font-weight:500;box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.lbl{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);font-weight:500;margin:24px 0 6px}
+.hint{font-size:13.5px;color:var(--muted);margin:0 0 8px}
+.pick{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--rule)}
+.pick .n{flex:1;min-width:0;font-family:var(--display);font-size:17px}
+.pick .n small{display:block;font-family:var(--body);font-size:12px;color:var(--muted)}
+.step{display:flex;align-items:center;border:1px solid var(--rule);border-radius:999px;overflow:hidden;flex-shrink:0}
+.step button{width:34px;height:32px;font-size:18px;color:var(--accent)}
+.step span{min-width:22px;text-align:center;font-variant-numeric:tabular-nums;font-weight:500}
+.pick.on .step{border-color:var(--accent)}
+.empty{padding:18px;text-align:center;color:var(--muted);border:1px dashed var(--rule);border-radius:12px;font-size:14px}
+.aisle{font-size:12px;color:var(--muted);margin:16px 0 2px;letter-spacing:.06em}
+.item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--rule)}
+.chk{width:26px;height:26px;border-radius:50%;border:1.5px solid var(--muted);flex-shrink:0;display:grid;place-items:center;font-size:14px;color:var(--paper)}
+.item .t{flex:1;min-width:0;text-align:left}
+.item .t b{font-weight:500;display:block}
+.item .t small{display:block;color:var(--muted);font-size:12.5px;line-height:1.35}
+.item .cost{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:14px;text-align:right}
+.item.home .chk{background:var(--accent);border-color:var(--accent)}
+.item.home .t b{color:var(--muted);text-decoration:line-through}
+.item.home .cost{color:var(--muted)}
+.item.got .chk{background:var(--accent);border-color:var(--accent)}
+.item.got .t b{text-decoration:line-through;color:var(--muted)}
+.item .chk.r{order:3}
+.item.got .t b small{color:var(--muted)}
+.alt-tag{display:inline-block;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass);margin-left:4px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:12px 0;border-bottom:1px solid var(--rule)}
+.opt .dot{width:20px;height:20px;border-radius:50%;border:1.5px solid var(--muted);flex-shrink:0;display:grid;place-items:center}
+.opt.sel .dot{border-color:var(--accent)}
+.opt.sel .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.opt .o{flex:1;min-width:0}
+.opt .o b{font-family:var(--display);font-weight:500;font-size:18px;display:block}
+.opt .o small{display:block;color:var(--muted);font-size:12.5px}
+.opt .op{font-variant-numeric:tabular-nums;white-space:nowrap;font-size:14px}
+.opt .op.none{color:var(--muted);font-style:italic}
+.row-acts{display:flex;gap:8px;flex-wrap:wrap;margin:-2px 0 4px 32px}
+.chip{border:1px solid var(--rule);border-radius:999px;padding:6px 12px;font-size:13px;color:var(--accent)}
+.chip.solid{background:var(--accent);border-color:var(--accent);color:var(--paper);font-weight:500}
+.chip.warn{color:#B0412E}
+.chip[disabled]{opacity:.45}
+.field{display:block;margin:10px 0}
+.field span{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;letter-spacing:.04em}
+.field input{width:100%;box-sizing:border-box;font:inherit;font-size:16px;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:10px;padding:10px 12px}
+.field input:focus{outline:2px solid var(--accent);outline-offset:0;border-color:var(--accent)}
+.acts{display:flex;gap:10px;margin-top:14px}
+.acts .chip{flex:1;text-align:center;padding:11px 0;font-size:14px}
+.status{font-size:13px;color:var(--muted);margin:6px 0 0 32px}
+.status.ai{color:var(--brass)}
+.status.err{color:#B0412E}
+.box{background:var(--paper);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;margin-top:12px}
+.box p{margin:0 0 8px;font-size:13.5px;color:var(--muted)}
+@keyframes pulse{50%{opacity:.4}}
+.pulse{animation:pulse 1.4s ease-in-out infinite}
+.addx{display:block;width:100%;margin:14px 0 4px;padding:11px 0;border:1.5px dashed var(--rule);border-radius:12px;color:var(--accent);font-weight:500;font-size:15px}
+.swipe{position:relative;overflow:hidden}
+.swipe::before{content:"✓  Have it at home";position:absolute;inset:0;display:flex;align-items:center;padding-left:16px;background:var(--accent);color:var(--paper);font-size:14px;font-weight:500;opacity:0;transition:opacity .15s}
+.swipe.on::before{opacity:1}
+.swipe .item{position:relative;background:var(--paper);transition:transform .22s cubic-bezier(.2,.8,.2,1)}
+.swipe.drag .item{transition:none}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,140%);z-index:20;background:var(--ink);color:var(--paper);border-radius:999px;padding:10px 10px 10px 18px;display:flex;align-items:center;gap:14px;font-size:14px;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.25);transition:transform .28s cubic-bezier(.2,.8,.2,1)}
+.toast.on{transform:translate(-50%,0)}
+.toast span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.toast button{color:var(--paper);font-weight:500;background:color-mix(in srgb,var(--paper) 18%,transparent);border-radius:999px;padding:6px 14px;flex-shrink:0}
+.tag-home{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent)}
+.bar{position:sticky;bottom:0;margin-top:24px;background:var(--card);border:1px solid var(--rule);border-radius:14px;padding:12px 14px;
+  display:flex;align-items:center;gap:12px;box-shadow:0 6px 20px rgba(0,0,0,.08)}
+.bar .sum{flex:1;font-size:13px;color:var(--muted)}
+.bar .sum b{display:block;font-size:20px;color:var(--ink);font-family:var(--display);font-weight:500;font-variant-numeric:tabular-nums lining-nums}
+.go{background:var(--accent);color:var(--paper);padding:10px 16px;border-radius:999px;font-weight:500;font-size:14px}
+.go[disabled]{opacity:.4}
+.clear{display:block;margin:26px auto 0;font-size:13px;color:var(--muted);text-decoration:underline;text-underline-offset:3px;padding:8px}
+.clear.arm{color:#B0412E}
+
+@media (prefers-reduced-motion: reduce){.track,.sheet,.scrim{transition:none!important}}
+</style>
+
+<div class="viewport">
+  <div class="track" id="track">
+    <!-- Page 1: the menu -->
+    <section class="panel" id="menuPanel" aria-label="Menu">
+      <div class="inner">
+        <header class="mast">
+          <div class="est">Aarhus · Est. 2026</div>
+          <h1>Menu</h1>
+          <div class="tag">Cooked to order, for one</div>
+          <div class="orn">✦</div>
+        </header>
+        <div id="menu"></div>
+        <footer class="foot">
+          <button class="snacks" id="snacksBtn">Snacks</button><br>
+          <button class="seal" id="seal" aria-label="Open shopping list">❦</button>
+        </footer>
+        <p class="dayhint" id="dayhint">Double-tap a meal to add it to your day</p>
+        <button class="daybar" id="daybar" hidden aria-label="Show your day"></button>
+      </div>
+    </section>
+    <!-- Page 2: the shopping list -->
+    <section class="panel shop" id="shopPanel" aria-label="Shopping list">
+      <div class="inner">
+        <div class="shop-head">
+          <h2>Shopping</h2>
+          <button class="back" id="back">← Menu</button>
+        </div>
+        <div class="tabs" role="group" aria-label="Mode">
+          <button id="tPlan" aria-pressed="true">1 · Plan</button>
+          <button id="tStore" aria-pressed="false">2 · In the store</button>
+        </div>
+        <div id="shop"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="dayview" id="dayview" role="dialog" aria-modal="true" aria-label="Your day"><div class="inner" id="dayInner"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastTxt"></span><button id="toastUndo">Undo</button></div>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="grip"></div>
+  <button class="x" id="close" aria-label="Close">×</button>
+  <div id="sheetBody"></div>
+</div>
+
+<script>
+/* ---- Data lives in menu.md, published next to this page. Edit that file to change dishes, prices or snacks. ---- */
+/* ---- menu.md → ITEMS, MENU, SNACKS ----
+   ## Store items   table: Key | Product | Pack | Pack price | Aisle
+   ## <section>     "Hours:" line, then one ### per dish (bullets, ingredient table, numbered method)
+   ## Snacks        table: one row per snack */
+function parseMenu(md){
+  const num=s=>{const v=parseFloat(String(s).replace(",","."));return isNaN(v)?null:v};
+  const cells=l=>l.trim().replace(/^\||\|$/g,"").split("|").map(c=>c.trim());
+  const ITEMS={},MENU=[],SNACKS=[];
+  let h2="",sec=null,dish=null,tbl=null;
+  const lines=md.split(/\r?\n/);
+  for(let n=0;n<lines.length;n++){
+    const l=lines[n],t=l.trim();
+    if(t.startsWith("|")){
+      if(!tbl){tbl={head:cells(t).map(h=>h.toLowerCase()),rows:[]};continue}
+      if(/^\|[\s:|-]+\|?$/.test(t))continue;
+      const c=cells(t),r={};tbl.head.forEach((h,i)=>r[h]=c[i]??"");tbl.rows.push(r);
+      if(!(lines[n+1]||"").trim().startsWith("|"))endTable();
+      continue;
+    }
+    if(tbl)endTable();
+    let m;
+    if(m=t.match(/^###\s+(.+)/)){if(!sec)continue;dish={name:m[1].trim(),id:"",price:0,desc:"",ing:[],steps:[]};sec.dishes.push(dish);continue}
+    if(m=t.match(/^##\s+(.+)/)){h2=m[1].trim();dish=null;
+      sec=/^(store items|snacks)$/i.test(h2)?null:{sec:h2,hours:"",dishes:[]};if(sec)MENU.push(sec);continue}
+    if(sec&&!dish&&(m=t.match(/^hours:\s*(.*)/i))){sec.hours=m[1];continue}
+    if(dish&&(m=t.match(/^[-*]\s*([^:]+):\s*(.*)/))){
+      const k=m[1].trim().toLowerCase(),v=m[2].trim();
+      if(k==="key")dish.id=v;else if(k==="price")dish.price=num(v);else if(k==="description")dish.desc=v;
+      else if(k==="nutrition"){const g=re=>num((v.match(re)||[])[1]);
+        dish.nut={kcal:g(/([\d.,]+)\s*kcal/i),p:g(/([\d.,]+)\s*g\s*protein/i),c:g(/([\d.,]+)\s*g\s*carbs/i),f:g(/([\d.,]+)\s*g\s*fat/i)}}
+      else if(k==="nutrition note")dish.nn=v;else if(k==="batch note")dish.batch=v;
+      continue}
+    if(dish&&(m=t.match(/^\d+[.)]\s+(.*)/))){dish.steps.push(m[1]);continue}
+  }
+  if(tbl)endTable();
+  function endTable(){
+    const T=tbl;tbl=null;
+    if(/^store items$/i.test(h2)){for(const r of T.rows)if(r.key)ITEMS[r.key]=[r.product,r.pack,num(r["pack price"]),r.aisle];return}
+    if(/^snacks$/i.test(h2)){for(const r of T.rows)if(r.key){
+      const x={id:r.key,name:r.name,price:num(r["price each"]),pack:r["shown as"],per:num(r["snacks per pack"])||1,buy:r["buy as"],packPrice:num(r["pack price"]),
+        nut:{kcal:num(r.kcal),p:num(r.protein),c:num(r.carbs),f:num(r.fat)}};
+      if(/^(y|yes|x|✓)$/i.test(r.estimate))x.est=true;SNACKS.push(x)}return}
+    if(dish)for(const r of T.rows){if(!r.item)continue;
+      const g={i:r.item.split("+").map(s=>s.trim()).join("|"),a:r.amount,c:num(r.cost)};
+      if(r["shown as"])g.n=r["shown as"];if(num(r["share of pack"])!=null)g.f=num(r["share of pack"]);dish.ing.push(g)}
+  }
+  return {ITEMS,MENU,SNACKS};
+}
+
+(async()=>{
+let ITEMS,MENU,SNACKS;
+try{const r=await fetch("menu.md",{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);({ITEMS,MENU,SNACKS}=parseMenu(await r.text()))}
+catch(e){document.getElementById("menu").innerHTML=`<p class="note" style="text-align:center">Couldn't load the menu data (menu.md). Reload the page to try again.</p>`;return}
+const snackById=Object.fromEntries(SNACKS.map(x=>[x.id,x]));
+for(const x of SNACKS)ITEMS["s_"+x.id]=[x.name,x.buy,x.packPrice,"Snacks"];
+const DISHES=MENU.flatMap(s=>s.dishes);
+const byId=Object.fromEntries(DISHES.map(d=>[d.id,d]));
+const AISLES=["Fruit & veg","Meat","Dairy & eggs","Bakery","Pantry","Spices","Snacks"];
+const kr=n=>n.toFixed(2);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+/* ---- alternatives: other products you can buy instead of an ingredient ----
+   st.alts[k] = [{id,name,pack,price|null,src,note,res}], st.sel[k] = chosen alt id (none = the original).
+   Saved to your private store in this artifact (and this device as a backup). */
+const RESEARCH_TASK="trig_01HuRLBd9Ui4Ty1kzVVrRh6h";
+function curAlt(k){const id=st.sel[k];return id?(st.alts[k]||[]).find(a=>a.id===id):null}
+function eff(k){const it=ITEMS[k],a=curAlt(k);
+  if(!a)return{name:it[0],pack:it[1],price:it[2],est:false,alt:false};
+  return{name:a.name,pack:a.pack||it[1],price:a.price!=null?a.price:it[2],est:a.price==null,alt:true}}
+const money=e=>`${e.est?"≈ ":""}`;
+
+/* ---- state (kept on this device; alternatives also synced) ---- */
+const KEY="bistro-strop-v1";
+let st={page:0,mode:"plan",portions:{},home:{},adj:{},got:{},alts:{},sel:{},day:[],snacks:{},sbuy:{},group:"meal",gotM:{},extra:[]};
+try{const s=JSON.parse(localStorage.getItem(KEY));if(s)st=Object.assign(st,s)}catch(e){}
+st.snacks=st.snacks||{};st.day=st.day||[];st.sbuy=st.sbuy||{};st.gotM=st.gotM||{};st.group=st.group||"meal";st.extra=st.extra||[];
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
+
+/* ---- menu ---- */
+document.getElementById("menu").innerHTML=MENU.map(s=>`
+  <div class="section"><h2>${s.sec}</h2><div class="hours">${s.hours}</div>
+  ${s.dishes.map(d=>`<button class="dish" data-id="${d.id}">
+    <div class="row"><span class="nm">${esc(d.name)}</span><span class="lead"></span><span class="pr">${kr(d.price)} <small>DKK</small></span></div>
+    <div class="ds">${esc(d.desc)}</div></button>`).join("")}</div>`).join("");
+
+const sheet=document.getElementById("sheet"),scrim=document.getElementById("scrim");
+let sheetOpen=false;
+function openDish(id){
+  const d=byId[id];
+  const rows=d.ing.map(g=>{const nm=g.n||g.i.split("|").map(k=>ITEMS[k][0]).join(" & ");
+    return `<tr><td class="q">${esc(g.a)}</td><td>${esc(nm)}</td><td class="c">${kr(g.c)} DKK</td></tr>`}).join("");
+  document.getElementById("sheetBody").innerHTML=`
+    <h3 id="sheetTitle">${esc(d.name)}</h3><p class="sd">${esc(d.desc)}</p>
+    ${d.nut?`<h4>Nutrition per portion · estimate</h4><div class="nut">
+      <div><b>${d.nut.kcal}</b><small>kcal</small></div><div><b>${d.nut.p} g</b><small>protein</small></div>
+      <div><b>${d.nut.c} g</b><small>carbs</small></div><div><b>${d.nut.f} g</b><small>fat</small></div></div>
+      ${d.nn?`<p class="note" style="margin-top:8px">${esc(d.nn)}</p>`:""}`:""}
+    <h4>For one portion</h4>${d.batch?`<p class="note" style="margin:0 0 8px">${esc(d.batch)}</p>`:""}
+    <table class="ing">${rows}<tr class="tot"><td class="q"></td><td>Cost per portion</td><td class="c">${kr(d.price)} DKK</td></tr></table>
+    <h4>Method</h4><ol class="steps">${d.steps.map(s=>`<li>${esc(s)}</li>`).join("")}</ol>
+`;
+  sheet.scrollTop=0;sheet.classList.add("on");scrim.classList.add("on");sheetOpen=true;
+  document.getElementById("close").focus({preventScroll:true});
+}
+function snackSheetHTML(){
+  return `<h3 id="sheetTitle">Snacks</h3><p class="sd">Prices and nutrition are per snack. Use − / + to add them to your day.</p>
+    <div class="snack-list">${SNACKS.map(x=>{const n=st.snacks[x.id]||0;return `<div class="srow${n?" on":""}">
+      <div class="sn"><div class="row"><span class="nm">${esc(x.name)}</span><span class="lead"></span><span class="pr">${kr(x.price)} <small>DKK</small></span></div>
+      <small>${esc(x.pack)}</small>
+      <small>${x.est?"≈ ":""}${x.nut.kcal} kcal · ${x.nut.p} g protein · ${x.nut.c} g carbs · ${x.nut.f} g fat${x.est?" (estimate)":""}</small></div>
+      <div class="step"><button data-snack="${x.id}" data-d="-1" aria-label="One less ${esc(x.name)}">−</button><span>${n}</span><button data-snack="${x.id}" data-d="1" aria-label="One more ${esc(x.name)}">+</button></div></div>`}).join("")}</div>`}
+let snackOpen=false;
+function openSnacks(){
+  document.getElementById("sheetBody").innerHTML=snackSheetHTML();snackOpen=true;
+  sheet.scrollTop=0;sheet.classList.add("on");scrim.classList.add("on");sheetOpen=true;
+  document.getElementById("close").focus({preventScroll:true});
+}
+function bumpSnack(id,d){const n=Math.max(0,(st.snacks[id]||0)+d);n?st.snacks[id]=n:delete st.snacks[id];save();renderDay();
+  if(snackOpen)document.getElementById("sheetBody").innerHTML=snackSheetHTML()}
+document.getElementById("sheetBody").addEventListener("click",e=>{const t=e.target.closest("[data-snack]");if(t&&snackOpen)bumpSnack(t.dataset.snack,+t.dataset.d)});
+function closeDish(){sheet.classList.remove("on");scrim.classList.remove("on");sheetOpen=false;altKey=null;snackOpen=false;xEdit=undefined}
+/* single tap opens the dish; double tap adds/removes it from your day */
+let tapId=null,tapTimer=0;
+document.getElementById("menu").addEventListener("click",e=>{const b=e.target.closest(".dish");if(!b)return;const id=b.dataset.id;
+  if(tapId===id){clearTimeout(tapTimer);tapId=null;toggleDay(id);return}
+  clearTimeout(tapTimer);tapId=id;tapTimer=setTimeout(()=>{tapId=null;openDish(id)},280)});
+document.getElementById("menu").addEventListener("dblclick",e=>e.preventDefault());
+function toggleDay(id){const i=st.day.indexOf(id);i<0?st.day.push(id):st.day.splice(i,1);save();renderDay()}
+function dayList(){return DISHES.filter(d=>st.day.includes(d.id))}   // menu order = breakfast → dinner
+function snackList(){return SNACKS.filter(x=>st.snacks[x.id]>0)}
+function snackCount(){return snackList().reduce((a,x)=>a+st.snacks[x.id],0)}
+function dayTotals(L){const T=dayMeals(L);for(const x of snackList()){const n=st.snacks[x.id];
+  T.price+=x.price*n;T.kcal+=x.nut.kcal*n;T.p+=x.nut.p*n;T.c+=x.nut.c*n;T.f+=x.nut.f*n}
+  for(const k of ["kcal","p","c","f"])T[k]=Math.round(T[k]);return T}
+function dayMeals(L){return L.reduce((t,d)=>({price:t.price+d.price,kcal:t.kcal+(d.nut?.kcal||0),p:t.p+(d.nut?.p||0),c:t.c+(d.nut?.c||0),f:t.f+(d.nut?.f||0)}),{price:0,kcal:0,p:0,c:0,f:0})}
+function barHTML(L,T){const sc=snackCount(),parts=[];if(L.length)parts.push(`${L.length} meal${L.length===1?"":"s"}`);if(sc)parts.push(`${sc} snack${sc===1?"":"s"}`);
+  return `<span class="sum">${parts.join(" · ")} · ${T.p} g protein<b>${T.kcal.toLocaleString("en")} kcal</b></span>
+  <span class="pr2">total<b>${kr(T.price)} DKK</b></span><span class="chev">▲</span>`}
+let dayOpen=false;
+function renderDay(){
+  document.querySelectorAll("#menu .dish").forEach(b=>b.classList.toggle("picked",st.day.includes(b.dataset.id)));
+  const L=dayList(),T=dayTotals(L),bar=document.getElementById("daybar");
+  const any=L.length||snackCount();
+  bar.hidden=!any;document.getElementById("dayhint").hidden=!!any;
+  if(any)bar.innerHTML=barHTML(L,T);
+  if(!any&&dayOpen)return closeDay();
+  if(dayOpen)renderDayView(L,T);
+}
+function renderDayView(L,T){
+  let h=`<button class="daybar" id="dayClose" aria-label="Close your day">${barHTML(L,T)}</button>
+   <div class="macros4"><div><b>${T.kcal}</b><small>kcal</small></div><div><b>${T.p} g</b><small>protein</small></div><div><b>${T.c} g</b><small>carbs</small></div><div><b>${T.f} g</b><small>fat</small></div></div>`;
+  h+=`<button class="go" id="dayShop" style="display:block;width:100%;margin-top:12px;padding:13px 0;font-size:15px">Shop for this →</button>
+    <p class="note" style="text-align:center;margin-top:6px">Replaces your current shopping list with these meals${snackCount()?" and snacks":""}.</p>`;
+  for(const s of MENU){const ds=s.dishes.filter(d=>st.day.includes(d.id));if(!ds.length)continue;
+    h+=`<div class="section" style="margin-top:22px"><h2>${s.sec}</h2>`;
+    for(const d of ds)h+=`<div class="dm"><div class="row"><span class="nm">${esc(d.name)}</span><span class="lead"></span><span class="pr">${kr(d.price)} <small>DKK</small></span></div>
+      <div class="ds">${esc(d.desc)}</div>${d.nut?`<div class="mx">${d.nut.kcal} kcal · ${d.nut.p} g protein · ${d.nut.c} g carbs · ${d.nut.f} g fat</div>`:""}
+      <button class="rm" data-rm="${d.id}">Remove</button></div>`;
+    h+=`</div>`}
+  const SL=snackList();
+  if(SL.length){h+=`<div class="section" style="margin-top:22px"><h2>Snacks</h2>`;
+    for(const x of SL){const n=st.snacks[x.id];
+      h+=`<div class="dm"><div class="srow2"><div style="flex:1;min-width:0"><div class="row"><span class="nm">${esc(x.name)}</span><span class="lead"></span><span class="pr">${kr(x.price*n)} <small>DKK</small></span></div>
+        <div class="ds">${n} × ${kr(x.price)} DKK</div><div class="mx">${Math.round(x.nut.kcal*n)} kcal · ${Math.round(x.nut.p*n*10)/10} g protein · ${Math.round(x.nut.c*n)} g carbs · ${Math.round(x.nut.f*n*10)/10} g fat</div></div>
+        <div class="step"><button data-snack="${x.id}" data-d="-1" aria-label="One less ${esc(x.name)}">−</button><span>${n}</span><button data-snack="${x.id}" data-d="1" aria-label="One more ${esc(x.name)}">+</button></div></div></div>`}
+    h+=`</div>`}
+  h+=`<p class="note" style="text-align:center">Meal nutrition values are estimates; snack values are from the labels where available.</p>`;
+  document.getElementById("dayInner").innerHTML=h;
+}
+function openDay(){dayOpen=true;renderDay();const v=document.getElementById("dayview");v.scrollTop=0;v.classList.add("on");document.getElementById("dayClose")?.focus({preventScroll:true})}
+function closeDay(){dayOpen=false;document.getElementById("dayview").classList.remove("on")}
+document.getElementById("daybar").onclick=openDay;
+document.getElementById("dayview").addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+  if(t.id==="dayShop"){
+    st.portions={};for(const id of st.day)st.portions[id]=1;st.sbuy={...st.snacks};
+    st.adj={};st.got={};st.gotM={};st.mode="store";save();closeDay();
+    document.getElementById("shopPanel").scrollTop=0;go(1);return}
+  if(t.id==="dayClose")closeDay();else if(t.dataset.rm)toggleDay(t.dataset.rm);else if(t.dataset.snack)bumpSnack(t.dataset.snack,+t.dataset.d)});
+renderDay();
+document.getElementById("snacksBtn").onclick=openSnacks;
+scrim.onclick=closeDish;document.getElementById("close").onclick=closeDish;
+
+/* ---- shopping maths ---- */
+function needs(){
+  const m={};
+  for(const d of DISHES){const p=st.portions[d.id]||0;if(!p)continue;
+    for(const g of d.ing)for(const k of g.i.split("|")){
+      const f=(g.f!=null?g.f:g.c/ITEMS[k][2])*p;
+      (m[k]??={f:0,dishes:new Set()}).f+=f;m[k].dishes.add(d.name);
+    }}
+  for(const x of SNACKS){const n=st.sbuy[x.id]||0;if(!n)continue;const k="s_"+x.id;
+    (m[k]??={f:0,dishes:new Set()}).f+=n/x.per;m[k].dishes.add(`${n} × snack`)}
+  for(const k in m){m[k].auto=Math.max(1,Math.ceil(m[k].f-1e-6));m[k].packs=st.adj[k]??m[k].auto}
+  return m;
+}
+function usage(f,pack){return f<0.995?`uses ~${Math.max(1,Math.round(f*100))}% of a ${pack}`:`needs ${(Math.round(f*10)/10).toString()} × ${pack}`}
+
+function storeRow(k,n,got){const e=eff(k),a=curAlt(k);
+  const sub=[esc(e.pack)];if(e.alt)sub.push(`instead of ${esc(ITEMS[k][0])}`);if(a&&a.res&&a.res.status==="pending")sub.push(`<span class="pulse">AI pricing…</span>`);
+  return `<div class="swipe" data-k="${k}" data-nm="${esc(e.name)}"><div class="item${got?" got":""}">
+    <button class="t" data-alts="${k}" aria-label="Options for ${esc(e.name)}"><b>${n.packs} × ${esc(e.name)}${e.alt?`<span class="alt-tag">swap</span>`:""}</b><small>${sub.join(" · ")}</small></button>
+    <span class="cost">${money(e)}${kr(n.packs*e.price)} DKK</span>
+    <button class="chk" data-got="${k}" aria-label="${got?"Back on the list":"In the basket"}: ${esc(e.name)}">${got?"✓":""}</button>
+  </div></div>`}
+
+function renderShop(){
+  document.getElementById("tPlan").setAttribute("aria-pressed",st.mode==="plan");
+  document.getElementById("tStore").setAttribute("aria-pressed",st.mode==="store");
+  const N=needs(),keys=Object.keys(N);
+  const buy=keys.filter(k=>!st.home[k]);
+  const X=st.extra,xLeft=X.filter(x=>!x.got);
+  const total=buy.reduce((s,k)=>s+N[k].packs*eff(k).price,0)+X.reduce((s,x)=>s+(x.price||0),0);
+  const xRows=plan=>X.length?`<div class="aisle"><b style="color:var(--ink)">Your items</b></div>`+X.map(x=>{
+    const sub=[x.qty?esc(x.qty):"",x.price==null?"no price":""].filter(Boolean).join(" · ");
+    return `<div class="swipe" data-k="x:${x.id}" data-nm="${esc(x.name)}"><div class="item${x.got&&!plan?" got":""}"><button class="t" data-xedit="${x.id}"><b>${esc(x.name)}</b>${sub?`<small>${sub}</small>`:""}</button>
+      ${x.price!=null?`<span class="cost">${kr(x.price)} DKK</span>`:""}${plan?"":`<button class="chk" data-xgot="${x.id}" aria-label="${x.got?"Back on the list":"In the basket"}: ${esc(x.name)}">${x.got?"✓":""}</button>`}</div></div>`}).join(""):"";
+  const addBtn=`<button class="addx" id="addX">＋ Add item</button>`;
+  const portions=Object.values(st.portions).reduce((a,b)=>a+b,0);
+  const byAisle=list=>AISLES.map(a=>[a,list.filter(k=>ITEMS[k][3]===a).sort((x,y)=>ITEMS[x][0].localeCompare(ITEMS[y][0]))]).filter(([,l])=>l.length);
+  let h="";
+  if(st.mode==="plan"){
+    h+=addBtn+xRows(true);
+    h+=`<div class="lbl">What are you cooking?</div>`;
+    h+=MENU.map(s=>s.dishes.map(d=>{const p=st.portions[d.id]||0;
+      return `<div class="pick${p?" on":""}"><div class="n">${esc(d.name)}<small>${s.sec} · ${kr(d.price)} DKK</small></div>
+      <div class="step"><button data-dish="${d.id}" data-d="-1" aria-label="One less ${esc(d.name)}">−</button><span>${p}</span><button data-dish="${d.id}" data-d="1" aria-label="One more ${esc(d.name)}">+</button></div></div>`}).join("")).join("");
+    h+=SNACKS.map(x=>{const n=st.sbuy[x.id]||0;return `<div class="pick${n?" on":""}"><div class="n">${esc(x.name)}<small>Snack · ${kr(x.price)} DKK each</small></div>
+      <div class="step"><button data-sbuy="${x.id}" data-d="-1" aria-label="One less ${esc(x.name)}">−</button><span>${n}</span><button data-sbuy="${x.id}" data-d="1" aria-label="One more ${esc(x.name)}">+</button></div></div>`}).join("");
+    h+=`<div class="lbl">Ingredients</div>`;
+    if(!keys.length)h+=`<div class="empty">Add a portion of something above and its ingredients show up here.</div>`;
+    else{
+      h+=`<p class="hint">Tap anything you already have at home. Use − / + to change how many packs to buy.</p>`;
+      for(const [a,list] of byAisle(keys)){
+        h+=`<div class="aisle">${a}</div>`;
+        for(const k of list){const it=ITEMS[k],n=N[k],home=!!st.home[k];
+          h+=`<div class="item${home?" home":""}">
+            <button class="chk" data-home="${k}" aria-label="${home?"Need to buy":"Have at home"}: ${esc(it[0])}">${home?"✓":""}</button>
+            <button class="t" data-home="${k}"><b>${esc(eff(k).name)}${eff(k).alt?`<span class="alt-tag">swap</span>`:""}</b><small>${home?`<span class="tag-home">At home</span> · `:""}${usage(n.f,it[1])} · ${[...n.dishes].join(", ")}</small></button>
+            ${home?`<span class="cost">—</span>`:`<div class="step"><button data-pack="${k}" data-d="-1" aria-label="One pack less">−</button><span>${n.packs}</span><button data-pack="${k}" data-d="1" aria-label="One pack more">+</button></div>`}
+          </div>`}
+      }
+    }
+    h+=`<div class="bar"><div class="sum">${buy.length+X.length} to buy · ${portions} portion${portions===1?"":"s"}<b>${kr(total)} DKK</b></div>
+       <button class="go" id="goStore" ${buy.length||X.length?"":"disabled"}>Go shopping →</button></div>`;
+  }else{
+    const meals=DISHES.filter(d=>st.portions[d.id]),snk=SNACKS.filter(x=>st.sbuy[x.id]);
+    const multi=meals.length+(snk.length?1:0)>1, byMeal=multi&&st.group==="meal";
+    if(!buy.length&&!X.length)h+=addBtn+`<div class="empty" style="margin-top:20px">Nothing to buy yet. Plan a meal in step 1, or pick meals on the menu and tap “Shop for this”.</div>`;
+    else{
+      if(multi)h+=`<div class="tabs" role="group" aria-label="List layout" style="margin-top:14px"><button data-group="meal" aria-pressed="${byMeal}">By meal</button><button data-group="all" aria-pressed="${!byMeal}">All together</button></div>`;
+      h+=addBtn;
+      h+=`<p class="hint" style="margin-top:14px">${byMeal?"Meal by meal, breakfast to dinner. Swipe right on anything you already have at home. Switch to “All together” to see total amounts.":"Tap the circle when it's in your basket. Tap the name to swap it. Swipe right on an item you already have at home."}</p>`;
+      if(byMeal){
+        const rows=[];
+        for(const s of MENU)for(const d of s.dishes){const p=st.portions[d.id];if(!p)continue;
+          const R=[];d.ing.forEach((g,i)=>{const ks=g.i.split("|").filter(k=>!st.home[k]);if(!ks.length)return;
+            const key=d.id+"|"+i,k=ks[0],nm=g.n||ks.map(x=>eff(x).name).join(" & ");
+            R.push({key,k,ks,nm,sub:`${g.a}${p>1?` × ${p} portions`:""}`})});
+          rows.push({title:`${d.name}${p>1?` × ${p}`:""}`,sec:s.sec,R})}
+        if(snk.length)rows.push({title:"Snacks",sec:"",R:snk.filter(x=>!st.home["s_"+x.id]).map(x=>({key:"snack|"+x.id,k:"s_"+x.id,ks:["s_"+x.id],nm:x.name,sub:`${st.sbuy[x.id]} snack${st.sbuy[x.id]>1?"s":""} · ${x.buy}`}))});
+        let all=X.length,left=xLeft.length;h+=xRows(false);
+        for(const r of rows){if(!r.R.length)continue;h+=`<div class="aisle">${r.sec?esc(r.sec)+" · ":""}<b style="color:var(--ink)">${esc(r.title)}</b></div>`;
+          for(const x of r.R){const got=!!st.gotM[x.key];all++;if(!got)left++;
+            h+=`<div class="swipe" data-k="${x.ks.join("|")}" data-nm="${esc(x.nm)}"><div class="item${got?" got":""}"><button class="t" data-alts="${x.k}"><b>${esc(x.nm)}</b><small>${esc(x.sub)}</small></button>
+              <button class="chk" data-gotm="${x.key}" aria-label="${got?"Back on the list":"In the basket"}: ${esc(x.nm)}">${got?"✓":""}</button></div></div>`}}
+        h+=left?`<div class="bar"><div class="sum">${left} of ${all} left<b>${kr(total)} DKK</b></div><span class="sum" style="flex:0;text-align:right;white-space:nowrap">trip total</span></div>`
+          :`<div class="bar"><div class="sum">All ${all} in the basket<b>${kr(total)} DKK</b></div><button class="go" id="doneTrip">Done ✓</button></div>`;
+      }else{
+      const left=buy.filter(k=>!st.got[k]),done=buy.filter(k=>st.got[k]);
+      const leftCost=left.reduce((s,k)=>s+N[k].packs*eff(k).price,0)+xLeft.reduce((s,x)=>s+(x.price||0),0);
+      const nLeft=left.length+xLeft.length,nAll=buy.length+X.length;
+      h+=xRows(false);
+      for(const [a,list] of byAisle(left)){
+        h+=`<div class="aisle">${a}</div>`;
+        for(const k of list)h+=storeRow(k,N[k],false)}
+      if(done.length){h+=`<div class="aisle">In the basket</div>`;
+        for(const k of done)h+=storeRow(k,N[k],true)}
+      h+=nLeft
+        ?`<div class="bar"><div class="sum">${nLeft} of ${nAll} left<b>${kr(leftCost)} DKK</b></div>
+        <span class="sum" style="flex:0;text-align:right;white-space:nowrap">trip total<br>${kr(total)} DKK</span></div>`
+        :`<div class="bar"><div class="sum">All ${nAll} in the basket<b>${kr(total)} DKK</b></div>
+        <button class="go" id="doneTrip">Done ✓</button></div>`;
+      }
+    }
+  }
+  h+=`<button class="clear" id="clear">Start a new list</button>`;
+  document.getElementById("shop").innerHTML=h;
+}
+
+document.getElementById("shop").addEventListener("click",e=>{
+  const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.dish){const id=t.dataset.dish;st.portions[id]=Math.max(0,(st.portions[id]||0)+ +t.dataset.d);if(!st.portions[id])delete st.portions[id];st.adj={}}
+  else if(t.dataset.pack){const k=t.dataset.pack,N=needs();const v=N[k].packs+ +t.dataset.d;
+    if(v<=0){st.home[k]=true;delete st.adj[k]}else st.adj[k]=v}
+  else if(t.dataset.home){const k=t.dataset.home;st.home[k]?delete st.home[k]:st.home[k]=true}
+  else if(t.dataset.alts){openAlts(t.dataset.alts);return}
+  else if(t.id==="addX"){openExtra(null);return}
+  else if(t.dataset.xedit){openExtra(t.dataset.xedit);return}
+  else if(t.dataset.xgot){const x=st.extra.find(x=>x.id===t.dataset.xgot);if(x)x.got=!x.got}
+  else if(t.dataset.gotm){const k=t.dataset.gotm;st.gotM[k]?delete st.gotM[k]:st.gotM[k]=true}
+  else if(t.dataset.group){st.group=t.dataset.group}
+  else if(t.dataset.sbuy){const id=t.dataset.sbuy;const n=Math.max(0,(st.sbuy[id]||0)+ +t.dataset.d);n?st.sbuy[id]=n:delete st.sbuy[id];st.adj={}}
+  else if(t.dataset.got){const k=t.dataset.got;st.got[k]?delete st.got[k]:st.got[k]=true}
+  else if(t.id==="doneTrip"){
+    st.portions={};st.sbuy={};st.home={};st.adj={};st.got={};st.gotM={};st.extra=[];st.mode="plan";
+    save();renderShop();document.getElementById("shopPanel").scrollTop=0;go(0);return}
+  else if(t.id==="goStore"){st.mode="store";document.getElementById("shopPanel").scrollTop=0}
+  else if(t.id==="clear"){
+    if(!t.classList.contains("arm")){t.classList.add("arm");t.textContent="Tap again to clear everything";setTimeout(()=>{if(t.isConnected){t.classList.remove("arm");t.textContent="Start a new list"}},3000);return}
+    st.portions={};st.sbuy={};st.home={};st.adj={};st.got={};st.gotM={};st.extra=[];st.mode="plan";
+  }else return;
+  save();renderShop();
+});
+document.getElementById("tPlan").onclick=()=>{st.mode="plan";save();renderShop()};
+document.getElementById("tStore").onclick=()=>{st.mode="store";save();renderShop()};
+
+/* ---- alternatives sheet ---- */
+let altKey=null,altView={};   // altView: {mode:"list"|"price", alt:id}
+const uid=()=>Math.random().toString(36).slice(2,10);
+function showSheet(html){document.getElementById("sheetBody").innerHTML=html;sheet.classList.add("on");scrim.classList.add("on");sheetOpen=true}
+function openAlts(k){altKey=k;altView={mode:"list"};renderAlts();sheet.scrollTop=0;document.getElementById("close").focus({preventScroll:true})}
+function priceTxt(p){return p==null?`<span class="op none">No price</span>`:`<span class="op">${kr(p)} DKK</span>`}
+function renderAlts(){
+  const k=altKey;if(k==null)return;const it=ITEMS[k],alts=st.alts[k]||[],sel=st.sel[k]||"";
+  if(altView.mode==="price")return renderPrice();
+  let h=`<h3 id="sheetTitle">${esc(it[0])}</h3><p class="sd">Pick what you're buying. New options are saved for next time.</p>`;
+  h+=`<h4>Options</h4>`;
+  h+=`<button class="opt${!sel?" sel":""}" data-pick=""><span class="dot"></span><span class="o"><b>${esc(it[0])}</b><small>${esc(it[1])} · original</small></span>${priceTxt(it[2])}</button>`;
+  for(const a of alts){
+    const r=a.res||{};
+    h+=`<button class="opt${sel===a.id?" sel":""}" data-pick="${a.id}"><span class="dot"></span><span class="o"><b>${esc(a.name)}</b><small>${esc(a.pack||"pack size not set")}${a.src?" · "+esc(a.src):""}</small></span>${priceTxt(a.price)}</button>`;
+    if(r.status==="pending")h+=`<div class="status ai pulse">Claude is checking Danish grocery stores…</div>`;
+    else if(r.status==="failed")h+=`<div class="status err">${esc(r.note||"Couldn't find a price.")}</div>`;
+    else if(a.note)h+=`<div class="status">${esc(a.note)}</div>`;
+    h+=`<div class="row-acts"><button class="chip" data-price="${a.id}">${a.price==null?"Price":"Change price"}</button><button class="chip warn" data-del="${a.id}">Remove</button></div>`;
+  }
+  h+=`<h4>Add an alternative</h4>
+    <label class="field"><span>Product</span><input id="altName" placeholder="e.g. Skyr natural" autocomplete="off"></label>
+    <label class="field"><span>Pack size (optional)</span><input id="altPack" placeholder="e.g. 1 kg" autocomplete="off"></label>
+    <div class="acts"><button class="chip" id="altSave">Save</button><button class="chip solid" id="altPriceNew">Price</button></div>`;
+  showSheet(h);
+}
+function renderPrice(){
+  const k=altKey,a=(st.alts[k]||[]).find(x=>x.id===altView.alt);if(!a){altView={mode:"list"};return renderAlts()}
+  const pending=a.res&&a.res.status==="pending";
+  let h=`<h3 id="sheetTitle">Price ${esc(a.name)}</h3><p class="sd">${esc(a.pack||"Pack size not set")} · alternative to ${esc(ITEMS[k][0])}</p>
+  <div class="box"><h4 style="margin-top:0">Fill in yourself</h4>
+    <label class="field"><span>Price in DKK</span><input id="manPrice" inputmode="decimal" placeholder="0.00" value="${a.price!=null?a.price:""}"></label>
+    <label class="field"><span>Pack size</span><input id="manPack" value="${esc(a.pack||"")}" placeholder="e.g. 500 g"></label>
+    <div class="acts"><button class="chip solid" id="manSave">Save price</button></div></div>
+  <div class="box"><h4 style="margin-top:0">AI research</h4>
+    <p>Sends the product to Claude, which searches Netto, Rema 1000 and other Danish online stores and fills in the price here. Usually takes a few minutes.</p>
+    ${pending?`<div class="status ai pulse" style="margin:0">Research running…</div>`:`<div class="acts"><button class="chip" id="aiGo" ${MCP?"":"disabled"}>Research with AI</button></div>`}
+    ${MCP?"":`<p style="margin-top:8px">AI research works when this page is opened in Claude.</p>`}
+    <div id="aiMsg" class="status err" style="margin:6px 0 0"></div></div>
+  <div class="acts"><button class="chip" id="priceBack">← Back to options</button></div>`;
+  showSheet(h);
+}
+function addAlt(){
+  const name=document.getElementById("altName").value.trim(),pack=document.getElementById("altPack").value.trim();
+  if(!name){document.getElementById("altName").focus();return null}
+  const a={id:uid(),name,pack,price:null,src:""};(st.alts[altKey]??=[]).push(a);persist();return a;
+}
+document.getElementById("sheetBody").addEventListener("click",async e=>{
+  if(altKey==null)return;const t=e.target.closest("button");if(!t)return;const k=altKey,list=st.alts[k]||[];
+  if(t.dataset.pick!=null){t.dataset.pick?st.sel[k]=t.dataset.pick:delete st.sel[k];persist();renderAlts();renderShop();return}
+  if(t.dataset.price){altView={mode:"price",alt:t.dataset.price};renderAlts();sheet.scrollTop=0;return}
+  if(t.dataset.del){
+    if(!t.classList.contains("arm")){t.classList.add("arm");t.textContent="Tap to confirm";setTimeout(()=>{if(t.isConnected){t.classList.remove("arm");t.textContent="Remove"}},3000);return}
+    st.alts[k]=list.filter(a=>a.id!==t.dataset.del);if(st.sel[k]===t.dataset.del)delete st.sel[k];persist();renderAlts();renderShop();return}
+  if(t.id==="altSave"){if(addAlt()){renderAlts();renderShop()}return}
+  if(t.id==="altPriceNew"){const a=addAlt();if(a){altView={mode:"price",alt:a.id};renderAlts();sheet.scrollTop=0;renderShop()}return}
+  if(t.id==="priceBack"){altView={mode:"list"};renderAlts();return}
+  const a=list.find(x=>x.id===altView.alt);if(!a)return;
+  if(t.id==="manSave"){
+    const v=parseFloat(document.getElementById("manPrice").value.replace(",","."));
+    if(!(v>=0)){document.getElementById("manPrice").focus();return}
+    a.price=Math.round(v*100)/100;a.pack=document.getElementById("manPack").value.trim()||a.pack;a.src="your price";a.note="";delete a.res;
+    persist();altView={mode:"list"};renderAlts();renderShop();return}
+  if(t.id==="aiGo"){
+    t.disabled=true;t.textContent="Sending…";const msg=document.getElementById("aiMsg");
+    const req=a.id+"-"+uid();
+    try{
+      await MCP.callTool("Claude Code Remote","fire_trigger",{trigger_id:RESEARCH_TASK,text:JSON.stringify({req,item:a.name,pack:a.pack||"",replaces:`${ITEMS[k][0]} (${ITEMS[k][1]})`})});
+      a.res={status:"pending",req,at:Date.now()};persist();renderAlts();renderShop();
+    }catch(err){
+      const c=err&&err.code;
+      msg.textContent=c==="server_not_connected"||c==="selection_required"?"Add the Claude Code connector in claude.ai Settings → Connectors, then try again."
+        :c==="needs_reauth"?"Reconnect Claude Code in claude.ai Settings → Connectors."
+        :c==="not_in_manifest"||c==="approval_required"?"This page isn't allowed to start the research. Allow it from the page's permissions and try again."
+        :"Couldn't start the research"+(err&&err.message?": "+err.message:".")+" You can fill in the price yourself.";
+      t.disabled=false;t.textContent="Research with AI";
+    }
+  }
+});
+
+/* ---- sync: alternatives live in your private store; AI results arrive there too ---- */
+let MCP=null,DOC=null,lastSaved="";
+function persist(){save();if(!DOC)return;const body={alts:st.alts,sel:st.sel},j=JSON.stringify(body);if(j===lastSaved)return;lastSaved=j;DOC.set(body).catch(()=>{lastSaved=""})}
+function applyResult(d){
+  if(!d||!d.req)return false;
+  for(const k in st.alts)for(const a of st.alts[k])if(a.res&&a.res.req===d.req&&a.res.status==="pending"){
+    if(d.status==="done"&&typeof d.price==="number"){a.price=Math.round(d.price*100)/100;if(d.pack)a.pack=String(d.pack);a.src="AI · "+(d.store||"online");a.note=d.note?String(d.note):"";delete a.res}
+    else a.res={status:"failed",req:d.req,note:d.note?String(d.note):"Couldn't find a reliable price."};
+    return true}
+  return false;
+}
+(async()=>{
+  try{MCP=await claude.use("mcp")}catch(e){MCP=null}
+  if(altKey!=null)renderAlts();
+})();
+(async()=>{
+  let db,user;try{[db,user]=await Promise.all([claude.use("db"),claude.use("user")])}catch(e){return}
+  if(!db||!user)return;let id;try{id=await user.id()}catch(e){return}if(!id)return;
+  const col=db.collection("data/users/"+id);DOC=col.doc("menu");
+  let first=true;
+  DOC.onSnapshot(s=>{
+    if(first){first=false;
+      if(!s.exists){persist();return}   // first time: upload what this device has
+    }
+    if(!s.exists)return;const d=s.data()||{};
+    // merge: store wins, keep any local alts it doesn't know yet
+    const alts=JSON.parse(JSON.stringify(d.alts||{}));
+    for(const k in st.alts)for(const a of st.alts[k]){const L=(alts[k]??=[]);if(!L.find(x=>x.id===a.id))L.push(a)}
+    st.alts=alts;st.sel=Object.assign({},d.sel||{});save();lastSaved=JSON.stringify({alts:st.alts,sel:st.sel});
+    if(altKey!=null&&document.activeElement?.tagName!=="INPUT")renderAlts();if(st.page===1)renderShop();
+  },()=>{});
+  col.onSnapshot(q=>{
+    let changed=false;
+    for(const s of q.docs)if(s.id.startsWith("r-")&&applyResult(s.data()))changed=true;
+    if(changed){persist();if(altKey!=null&&document.activeElement?.tagName!=="INPUT")renderAlts();if(st.page===1)renderShop()}
+  },()=>{});
+})();
+
+/* ---- paging: swipe on phone, arrow keys or the ❦ on laptop ---- */
+const track=document.getElementById("track");
+function go(p,animate=true){
+  st.page=p;save();
+  track.style.transition=animate?"transform .38s cubic-bezier(.2,.8,.2,1)":"none";
+  track.style.transform=`translateX(${-p*50}%)`;
+  document.getElementById("menuPanel").inert=p===1;document.getElementById("shopPanel").inert=p===0;
+  if(p===1)renderShop();
+}
+document.getElementById("seal").onclick=()=>go(1);
+document.getElementById("back").onclick=()=>go(0);
+addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&dayOpen)return closeDay();
+  if(e.key==="Escape"&&sheetOpen)return closeDish();
+  if(dayOpen)return;
+  if(sheetOpen)return;
+  if(e.key==="ArrowRight")go(1);if(e.key==="ArrowLeft")go(0);
+});
+let sx=0,sy=0,dx=0,lock=null,w=1,noPage=false;
+track.addEventListener("touchstart",e=>{noPage=st.page===1&&st.mode==="store"&&!!e.target.closest("#shop .swipe");if(noPage||sheetOpen||e.touches.length>1)return;
+  sx=e.touches[0].clientX;sy=e.touches[0].clientY;dx=0;lock=null;w=innerWidth;},{passive:true});
+track.addEventListener("touchmove",e=>{if(noPage||sheetOpen||lock==="v")return;
+  const x=e.touches[0].clientX-sx,y=e.touches[0].clientY-sy;
+  if(lock===null){if(Math.abs(x)<8&&Math.abs(y)<8)return;lock=Math.abs(x)>Math.abs(y)*1.2?"h":"v";if(lock==="v")return}
+  e.preventDefault();dx=x;
+  const edge=(st.page===0&&dx>0)||(st.page===1&&dx<0);
+  const off=edge?dx*0.2:dx;
+  track.style.transition="none";
+  track.style.transform=`translateX(calc(${-st.page*50}% + ${off}px))`;
+},{passive:false});
+track.addEventListener("touchend",()=>{if(noPage||lock!=="h")return;
+  const t=Math.min(80,w*0.18);
+  if(st.page===0&&dx<-t)go(1);else if(st.page===1&&dx>t)go(0);else go(st.page);lock=null;});
+
+/* swipe an item right in the store list = "have it at home" (removes it from the list, with undo) */
+let sw=null,toastTimer=0,undoKeys=null;
+const shopEl=document.getElementById("shop");
+shopEl.addEventListener("touchstart",e=>{if(st.mode!=="store"||e.touches.length>1)return;const wr=e.target.closest(".swipe");if(!wr)return;
+  sw={wr,it:wr.firstElementChild,x:e.touches[0].clientX,y:e.touches[0].clientY,dx:0,lock:null}},{passive:true});
+shopEl.addEventListener("touchmove",e=>{if(!sw)return;const x=e.touches[0].clientX-sw.x,y=e.touches[0].clientY-sw.y;
+  if(!sw.lock){if(Math.abs(x)<8&&Math.abs(y)<8)return;sw.lock=(x>0&&Math.abs(x)>Math.abs(y)*1.2)?"h":"v";if(sw.lock==="v"){sw=null;return}
+    sw.wr.classList.add("drag","on")}
+  e.preventDefault();sw.dx=Math.max(0,x);sw.it.style.transform=`translateX(${sw.dx}px)`},{passive:false});
+shopEl.addEventListener("touchend",()=>{if(!sw)return;const {wr,it,dx}=sw;sw=null;wr.classList.remove("drag");
+  if(dx>wr.offsetWidth*0.35){it.style.transform="translateX(105%)";setTimeout(()=>wr.dataset.k.startsWith("x:")?dropExtra(wr.dataset.k.slice(2)):markHome(wr.dataset.k.split("|"),wr.dataset.nm),200)}
+  else{it.style.transform="";setTimeout(()=>wr.classList.remove("on"),220)}});
+function markHome(keys,name){keys=keys.filter(k=>!st.home[k]);for(const k of keys)st.home[k]=true;save();renderShop();
+  undoKeys=keys;undoX=null;showToast(`${name} — at home`)}
+let undoX=null;
+function showToast(txt){document.getElementById("toastTxt").textContent=txt;const t=document.getElementById("toast");t.classList.add("on");clearTimeout(toastTimer);toastTimer=setTimeout(()=>{t.classList.remove("on");undoKeys=null;undoX=null},5000)}
+function dropExtra(id){const i=st.extra.findIndex(x=>x.id===id);if(i<0)return;undoX={i,x:st.extra[i]};undoKeys=null;st.extra.splice(i,1);save();renderShop();showToast(`${undoX.x.name} — removed`)}
+document.getElementById("toastUndo").onclick=()=>{if(undoX){st.extra.splice(undoX.i,0,undoX.x);undoX=null;save();renderShop()}
+  if(undoKeys){for(const k of undoKeys)delete st.home[k];save();renderShop()}
+  undoKeys=null;document.getElementById("toast").classList.remove("on")};
+
+/* add / edit your own items (anything not on the menu) */
+let xEdit=undefined;
+function openExtra(id){const x=id?st.extra.find(x=>x.id===id):null;xEdit=id||null;
+  document.getElementById("sheetBody").innerHTML=`<h3 id="sheetTitle">${x?"Edit item":"Add an item"}</h3><p class="sd">Anything that isn't on the menu. Only the name is needed.</p>
+    <label class="field"><span>Name</span><input id="xName" value="${x?esc(x.name):""}" placeholder="e.g. Lip balm" autocomplete="off" enterkeyhint="done"></label>
+    <label class="field"><span>Quantity (optional)</span><input id="xQty" value="${x&&x.qty?esc(x.qty):""}" placeholder="e.g. 2, or 1 pack" autocomplete="off"></label>
+    <label class="field"><span>Price in DKK (optional)</span><input id="xPrice" inputmode="decimal" value="${x&&x.price!=null?x.price:""}" placeholder="0.00"></label>
+    <div class="acts">${x?`<button class="chip warn" id="xDel">Remove</button>`:""}<button class="chip solid" id="xSave">${x?"Save":"Add to list"}</button></div>`;
+  sheet.scrollTop=0;sheet.classList.add("on");scrim.classList.add("on");sheetOpen=true;
+  setTimeout(()=>document.getElementById("xName")?.focus(),350)}
+function saveExtra(){const n=document.getElementById("xName").value.trim();if(!n){document.getElementById("xName").focus();return}
+  const q=document.getElementById("xQty").value.trim(),pr=document.getElementById("xPrice").value.trim().replace(",",".");
+  const price=pr===""||isNaN(+pr)?null:Math.round(+pr*100)/100;
+  if(xEdit){const x=st.extra.find(x=>x.id===xEdit);if(x)Object.assign(x,{name:n,qty:q,price})}
+  else st.extra.push({id:Math.random().toString(36).slice(2,9),name:n,qty:q,price,got:false});
+  save();closeDish();renderShop()}
+document.getElementById("sheetBody").addEventListener("click",e=>{if(xEdit===undefined)return;const t=e.target.closest("button");if(!t)return;
+  if(t.id==="xSave")saveExtra();
+  else if(t.id==="xDel"){const id=xEdit;closeDish();dropExtra(id)}});
+document.getElementById("sheetBody").addEventListener("keydown",e=>{if(xEdit!==undefined&&e.key==="Enter"&&e.target.tagName==="INPUT"){e.preventDefault();saveExtra()}});
+
+/* swipe down on the dish card closes it */
+let ssy=0;
+sheet.addEventListener("touchstart",e=>{ssy=e.touches[0].clientY},{passive:true});
+sheet.addEventListener("touchend",e=>{if(sheet.scrollTop<=0&&e.changedTouches[0].clientY-ssy>90)closeDish()});
+
+go(st.page,false);
+})();
+</script>
