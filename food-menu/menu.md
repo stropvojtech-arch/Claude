@@ -14,7 +14,7 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 
 | Key | Product | Pack | Pack price | Aisle |
 |---|---|---|--:|---|
-| yogurt | Thise organic Greek-style yogurt 10% | 1 kg tub | 35.00 | Dairy & eggs |
+| yogurt | Thise organic Greek-style yogurt 10% | 1 kg tub | 40.00 | Dairy & eggs |
 | banana | Banana | 1 pc | 2.75 | Fruit & veg |
 | honey | Honey | 425 g jar | 19.25 | Pantry |
 | cereal | Choco granola (Änglamark) | 500 g box | 35.00 | Pantry |
@@ -76,14 +76,14 @@ Hours: Mornings
 ### Yogurt Bowl
 
 - Key: yogurt
-- Price: 20.75
+- Price: 22.25
 - Description: Thick Thise 10% Greek-style yogurt, sliced banana, honey and crunchy chocolate granola
 - Nutrition: 1000 kcal, 33 g protein, 121 g carbs, 44 g fat
 - Nutrition note: Yogurt (Thise 10%) and granola values are from their labels.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
-| yogurt | 300 g | 10.50 |  |  |
+| yogurt | 300 g | 12.00 |  |  |
 | banana | 1 pc | 2.75 |  |  |
 | honey | 2 tbsp | 1.90 |  |  |
 | cereal | 80 g | 5.60 |  |  |
