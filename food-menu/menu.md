@@ -57,6 +57,11 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 | potato | Potatoes | 2 kg bag | 18.00 | Fruit & veg |
 | crumbs | Breadcrumbs | 500 g | 7.50 | Pantry |
 | lemon | Lemon | 1 pc | 5.00 | Fruit & veg |
+| butter | Butter | 250 g | 25.00 | Dairy & eggs |
+| parsnip | Parsnip (or parsley root) | 500 g bag | 15.00 | Fruit & veg |
+| celeriac | Celeriac | 1 pc (~700 g) | 15.00 | Fruit & veg |
+| marjoram | Dried marjoram | 8 g jar | 12.00 | Spices |
+| caraway | Ground caraway | 20 g jar | 12.00 | Spices |
 
 ## Breakfast
 
@@ -327,6 +332,38 @@ Method:
 2. Season the chicken and sear it in olive oil 2 min per side.
 3. Top with sliced mozzarella and bake 15 min, until the chicken is cooked through and the cheese has melted.
 4. Serve with the potatoes.
+
+### Bramboračka
+
+- Key: bramboracka
+- Price: 8.07
+- Description: Czech potato soup with root vegetables, a splash of cream, garlic, marjoram and caraway
+- Nutrition: 350 kcal, 6 g protein, 49 g carbs, 15 g fat
+- Nutrition note: A light dinner on its own; add bread to make it more filling.
+- Batch note: One pot makes 3 portions. Amounts are for one portion, with the whole pot in brackets. Prices of the new items (butter, parsnip, celeriac, marjoram, caraway) are estimates.
+
+| Item | Amount | Cost | Share of pack | Shown as |
+|---|---|--:|--:|---|
+| butter | ~7 g (pot ~20 g, a knob) | 0.70 |  |  |
+| carrot | ⅓ carrot (pot 1 carrot) | 0.32 |  |  |
+| parsnip | ~25 g (pot 1 small parsnip) | 0.70 |  |  |
+| celeriac | ~25 g (pot ~70 g) | 0.50 |  |  |
+| salt | a pinch | 0.01 |  |  |
+| onion | ⅓ onion (pot 1 onion) | 0.80 |  |  |
+| potato | ~200 g (pot 5 potatoes, ~600 g) | 1.80 |  |  |
+| cream | 25 ml (pot 75 ml) | 1.60 |  |  |
+| garlic | ⅔ clove (pot 2 cloves) | 0.24 |  |  |
+| marjoram | ½ tbsp (pot 1½ tbsp) | 1.00 |  |  |
+| caraway | ⅓ tsp (pot 1 tsp) | 0.40 |  |  |
+
+Method:
+
+1. Dice the carrot, parsnip and celeriac. Together they fill about one cereal bowl.
+2. Melt the butter in a large pot. Add the root vegetables and a pinch of salt and soften for about 5 min.
+3. Add the chopped onion and 1 diced potato, then pour in water to cover well (about 1.25 l) and bring to a boil.
+4. Add the other 4 potatoes, diced, and simmer about 20 min until everything is soft.
+5. Stir in the cream.
+6. Add the crushed garlic, marjoram and caraway, simmer 2–3 min more, and salt to taste.
 
 ## Snacks
 
