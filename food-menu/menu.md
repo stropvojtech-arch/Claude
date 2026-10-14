@@ -15,7 +15,7 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 | Key | Product | Pack | Pack price | Aisle |
 |---|---|---|--:|---|
 | yogurt | Thise organic Greek-style yogurt 10% | 1 kg tub | 39.95 | Dairy & eggs |
-| banana | Banana | 1 pc | 2.75 | Fruit & veg |
+| banana | Organic large bananas | bag (~8 pcs) | 26.00 | Fruit & veg |
 | honey | Danish honey | 425 g jar | 37.95 | Pantry |
 | cereal | Organic crunchy müsli | 500 g box | 39.95 | Pantry |
 | baguette | Irma organic sourdough baguette (frozen) | 400 g | 25.00 | Bakery |
@@ -75,7 +75,7 @@ Hours: Mornings
 ### Yogurt Bowl
 
 - Key: yogurt
-- Price: 24.88
+- Price: 25.38
 - Description: Thick Thise 10% Greek-style yogurt, sliced banana, honey and crunchy organic müsli
 - Nutrition: 1000 kcal, 33 g protein, 121 g carbs, 44 g fat
 - Nutrition note: Yogurt (Thise 10%) values are from its label. Müsli values are still from the old chocolate granola and may differ a little.
@@ -83,7 +83,7 @@ Hours: Mornings
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
 | yogurt | 300 g | 11.99 |  |  |
-| banana | 1 pc | 2.75 |  |  |
+| banana | 1 pc | 3.25 |  |  |
 | honey | 2 tbsp | 3.75 |  |  |
 | cereal | 80 g | 6.39 |  |  |
 
