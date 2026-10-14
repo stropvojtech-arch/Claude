@@ -1,6 +1,11 @@
-# Micro-Moment Analysis — Instructions
+---
+name: micro-moment-analysis
+description: Run a micro-moment marketing analysis on a final persona list: find the exact real-world moments a persona's problem fires (year/week/day), why they care and what drives it, how customers describe it in reviews, what tipped them to buy now, and which moments people share on social. Produces an MD working database plus a readable HTML report per persona. Use when the user asks for a micro moment analysis, trigger moments, "why now" research, review language mining, or social comparison research for ad creative on personas, even if they don't name the method.
+---
 
-Instructions for Claude to run a micro-moment analysis for a marketing agency client. This file is the source of truth for the method; it will later be turned into a skill.
+# Micro-Moment Analysis
+
+Run a micro-moment analysis for a marketing agency client, following the method below.
 
 ---
 
@@ -64,6 +69,8 @@ Every analysis produces two files for the persona being run (e.g. `analysis/<cli
 - **HTML file: the readable version for Vojtech.** Vojtech cannot practically read MD, so everything they need to review must be in the HTML. IDs are clickable links that jump to the referenced card. Summaries come first, then cards.
 
 Assign a short persona code (e.g. `W57` for a 57-year-old woman).
+
+Build the HTML from `assets/report-template.html` (in this skill's folder). It already has the layout, styles, section order and card patterns. Copy it, fill the placeholders, and repeat the card blocks as needed. Keep every card `id` attribute equal to its ID so `href="#W57-T1-03"` links work. Regenerate the HTML from the MD whenever the MD changes meaningfully, and send it to the user (SendUserFile, display "render") at each checkpoint and at the end.
 
 ---
 

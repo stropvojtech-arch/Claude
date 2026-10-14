@@ -1,0 +1,274 @@
+<!doctype html>
+<!--
+  Micro-moment analysis report template.
+  - Replace every {{PLACEHOLDER}}.
+  - Blocks between the "REPEAT: name" and "/REPEAT: name" comment markers are repeated once per item. Remove the markers in the final file.
+  - Single example rows in tables and lists (no markers) are also repeated as needed.
+  - Every card's id attribute must equal its analysis ID (e.g. W57-T1-03) so links like <a href="#W57-T1-03"> work.
+  - Status pills: class="pill ok" (confirmed), "pill warn" (weak / unconfirmed / hypothesis), "pill bad" (contradicted), "pill new" (new).
+  - Delete this comment in the final file.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{CLIENT}} · {{PERSONA_CODE}} Micro Moments</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --surface: #ffffff; --text: #1d1d1f; --muted: #6b6b70; --line: #e4e2dc;
+    --accent: #2f5bd3; --accent-soft: #e8eefc;
+    --ok: #1f7a4d; --ok-soft: #e3f3ea; --warn: #9a6400; --warn-soft: #fbf0d9;
+    --bad: #b3261e; --bad-soft: #fbe5e3; --new: #6b3fc4; --new-soft: #efe8fb;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #141416; --surface: #1d1d20; --text: #ececee; --muted: #a0a0a8; --line: #303036;
+      --accent: #8aa8ff; --accent-soft: #23293d;
+      --ok: #6fd3a0; --ok-soft: #17301f; --warn: #f0c063; --warn-soft: #33290f;
+      --bad: #ff8a80; --bad-soft: #3a1a18; --new: #c3a6ff; --new-soft: #2a2140;
+    }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.55 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  nav { position: sticky; top: 0; z-index: 10; background: var(--bg); border-bottom: 1px solid var(--line);
+    display: flex; gap: 4px; overflow-x: auto; padding: 8px 16px; }
+  nav a { color: var(--muted); text-decoration: none; padding: 6px 10px; border-radius: 6px; white-space: nowrap; font-size: 14px; }
+  nav a:hover { background: var(--accent-soft); color: var(--accent); }
+  main { max-width: 980px; margin: 0 auto; padding: 24px 16px 80px; }
+  h1 { font-size: 28px; margin: 8px 0 4px; }
+  h2 { font-size: 22px; margin: 48px 0 6px; padding-top: 8px; border-top: 2px solid var(--text); }
+  h3 { font-size: 17px; margin: 28px 0 10px; }
+  .sub { color: var(--muted); margin: 0 0 16px; }
+  .tier { display: inline-block; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
+    padding: 2px 8px; border-radius: 4px; background: var(--accent-soft); color: var(--accent); margin-left: 8px; vertical-align: middle; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 16px 18px; margin: 12px 0; scroll-margin-top: 64px; }
+  .card:target { outline: 2px solid var(--accent); }
+  .card h4 { margin: 0 0 6px; font-size: 16px; }
+  .id { font: 12px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--muted); }
+  a.ref { font: 13px ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--accent); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px 16px; margin: 10px 0; }
+  .f { font-size: 14px; } .f b { display: block; font-size: 12px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: .03em; }
+  blockquote { margin: 10px 0; padding: 8px 12px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 6px 6px 0; font-style: italic; }
+  blockquote cite { display: block; font-style: normal; font-size: 12px; color: var(--muted); margin-top: 4px; }
+  .chain { display: flex; flex-wrap: wrap; align-items: stretch; gap: 6px; margin: 12px 0; }
+  .chain .step { flex: 1 1 150px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; font-size: 14px; }
+  .chain .step b { display: block; font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: .04em; }
+  .chain .step.head { border-color: var(--accent); background: var(--accent-soft); }
+  .verdict { font-size: 14px; padding: 8px 12px; border-radius: 8px; background: var(--ok-soft); margin: 8px 0; }
+  .table-wrap { overflow-x: auto; margin: 10px 0; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; color: var(--muted); letter-spacing: .03em; }
+  .pill { display: inline-block; font-size: 12px; font-weight: 600; padding: 1px 8px; border-radius: 999px; }
+  .pill.ok { background: var(--ok-soft); color: var(--ok); } .pill.warn { background: var(--warn-soft); color: var(--warn); }
+  .pill.bad { background: var(--bad-soft); color: var(--bad); } .pill.new { background: var(--new-soft); color: var(--new); }
+  ul.tight { margin: 6px 0; padding-left: 20px; } ul.tight li { margin: 3px 0; }
+  .note { font-size: 14px; color: var(--muted); }
+  details summary { cursor: pointer; color: var(--accent); font-size: 14px; margin: 8px 0; }
+</style>
+</head>
+<body>
+<nav>
+  <a href="#overview">Overview</a><a href="#t1">T1 Moments</a><a href="#t2">T2 Language</a>
+  <a href="#t3">T3 Why now</a><a href="#t4">T4 Social</a><a href="#method">Method</a>
+</nav>
+<main>
+
+<header id="overview">
+  <h1>{{CLIENT}}: {{PERSONA_NAME}}</h1>
+  <p class="sub">Micro-moment analysis · {{PRODUCT}} · {{DATE}} · Persona code {{PERSONA_CODE}}</p>
+  <div class="card">
+    <h4>Persona</h4>
+    <p>{{PERSONA_DESCRIPTION}}</p>
+  </div>
+  <h3>Selected moments at a glance</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Moment</th><th>Headline driver</th><th>Supporting layer</th><th>Why it was selected</th></tr>
+    <!-- REPEAT: overview-row -->
+    <tr><td><a class="ref" href="#{{MOMENT_ID}}">{{MOMENT_ID}}</a> {{MOMENT_TITLE}}</td><td>{{HEADLINE_DRIVER}}</td><td>{{SUPPORTING_LAYER}}</td><td>{{WHY_SELECTED}}</td></tr>
+    <!-- /REPEAT: overview-row -->
+  </table></div>
+</header>
+
+<!-- ================= T1 ================= -->
+<section id="t1">
+  <h2>Task 1: Trigger moments <span class="tier">Basics</span></h2>
+  <p class="sub">When the problem fires, why she cares, and what drives it.</p>
+
+  <!-- REPEAT: moment -->
+  <div class="card" id="{{MOMENT_ID}}">
+    <span class="id">{{MOMENT_ID}}</span>
+    <h4>{{MOMENT_TITLE}}</h4>
+    <p>{{SITUATION}}</p>
+    <div class="grid">
+      <div class="f"><b>Timing: year</b>{{TIMING_YEAR}}</div>
+      <div class="f"><b>Timing: week</b>{{TIMING_WEEK}}</div>
+      <div class="f"><b>Timing: day</b>{{TIMING_DAY}}</div>
+      <div class="f"><b>Setting</b>{{SETTING}}</div>
+      <div class="f"><b>Others present</b>{{OTHERS_PRESENT}}</div>
+      <div class="f"><b>Friction type</b>{{FRICTION_TYPE}}</div>
+      <div class="f"><b>Immediate reaction</b>{{IMMEDIATE_REACTION}}</div>
+      <div class="f"><b>Specificity · Frequency</b>{{SPECIFICITY}}/5 · {{FREQUENCY}}</div>
+    </div>
+    <!-- REPEAT: quote -->
+    <blockquote>{{VERBATIM_QUOTE}}<cite><a href="{{SOURCE_URL}}">{{SOURCE_NAME}}</a> · {{SOURCE_DATE}}</cite></blockquote>
+    <!-- /REPEAT: quote -->
+    <p class="f"><b>Why selected</b>{{WHY_SELECTED}}</p>
+
+    <!-- REPEAT: chain -->
+    <h3 id="{{CHAIN_ID}}">Chain <span class="id">{{CHAIN_ID}}</span></h3>
+    <div class="chain">
+      <div class="step"><b>What</b>{{WHAT}}</div>
+      <div class="step"><b>Catalyst</b>{{CATALYST_OR_NONE}}</div>
+      <div class="step"><b>Why she cares</b>{{WHY_SHE_CARES}}</div>
+      <!-- REPEAT: why-level (mark the headline level with class="step head") -->
+      <div class="step"><b>Why {{N}} · {{LEVEL_LABEL}}</b>{{WHY_TEXT}}</div>
+      <!-- /REPEAT: why-level -->
+    </div>
+    <div class="verdict"><b>Depth verdict:</b> headline driver = {{HEADLINE_DRIVER}}; supporting layer = {{SUPPORTING_LAYER}}. Stopped at why {{STOP_LEVEL}} (confirmed by user).</div>
+    <div class="table-wrap"><table>
+      <tr><th>Driver</th><th>Hypothesis</th><th>Origin</th><th>Status</th><th>Volume</th><th>Intensity</th><th>Confidence</th><th>Evidence</th></tr>
+      <!-- REPEAT: driver -->
+      <tr id="{{DRIVER_ID}}"><td class="id">{{DRIVER_ID}}</td><td>{{HYPOTHESIS}}</td><td>{{ORIGIN}}</td>
+        <td><span class="pill {{STATUS_CLASS}}">{{STATUS}}</span></td><td>{{VOLUME}}</td><td>{{INTENSITY}}</td><td>{{CONFIDENCE}}</td><td>{{EVIDENCE_LINKS}}</td></tr>
+      <!-- /REPEAT: driver -->
+    </table></div>
+    <p class="note">Volume leader: {{VOLUME_LEADER}} · Intensity leader: {{INTENSITY_LEADER}} · Strong on both: {{BOTH_OR_NONE}}</p>
+    <!-- /REPEAT: chain -->
+  </div>
+  <!-- /REPEAT: moment -->
+
+  <h3>Also seen (runners-up)</h3>
+  <ul class="tight">
+    <!-- REPEAT: also-seen -->
+    <li>{{RUNNER_UP_MOMENT}}: {{ONE_LINE_REASON_NOT_SELECTED}}</li>
+    <!-- /REPEAT: also-seen -->
+  </ul>
+  <h3>Timing pattern</h3><p>{{TIMING_PATTERN}}</p>
+  <h3>Gaps</h3><ul class="tight"><li>{{GAP}}</li></ul>
+</section>
+
+<!-- ================= T2 ================= -->
+<section id="t2">
+  <h2>Task 2: Emotional language <span class="tier">Basics</span></h2>
+  <p class="sub">The customer's own words. Client reviews only (5★ / 3★ / 1★).</p>
+  <h3>Top promises (5★)</h3><ol class="tight"><li>{{PROMISE}} <a class="ref" href="#{{CARD_ID}}">{{CARD_ID}}</a></li></ol>
+  <h3>Top objections (1★) and lines that address them</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Objection</th><th>Severity</th><th>Frequency</th><th>Line that addresses it</th></tr>
+    <tr><td>{{OBJECTION}} <a class="ref" href="#{{CARD_ID}}">{{CARD_ID}}</a></td><td>{{SEVERITY}}/3</td><td>{{FREQ}}</td><td>{{ADDRESSING_LINE}}</td></tr>
+  </table></div>
+  <h3>3★ hesitations: "it works, but…"</h3><ul class="tight"><li>{{HESITATION}}</li></ul>
+  <h3>Use word for word</h3><ul class="tight"><li>"{{PHRASE}}"</li></ul>
+  <h3>Words to avoid</h3><p>{{AVOID_WORDS}}</p>
+  <h3>What finally made them buy (top 3)</h3><ol class="tight"><li>{{TIPPING_POINT}}</li></ol>
+
+  <details><summary>All language cards</summary>
+  <!-- REPEAT: language-card -->
+  <div class="card" id="{{CARD_ID}}">
+    <span class="id">{{CARD_ID}}</span> · <span class="pill {{TYPE_CLASS}}">{{TYPE}}</span> · {{STARS}}★ · {{EMOTION}}
+    <blockquote>{{VERBATIM_QUOTE}}<cite><a href="{{SOURCE_URL}}">{{SOURCE_NAME}}</a> · {{SOURCE_DATE}}</cite></blockquote>
+    <div class="grid">
+      <div class="f"><b>Chain · layer</b><a class="ref" href="#{{CHAIN_ID}}">{{CHAIN_ID}}</a> · {{LAYER}}</div>
+      <div class="f"><b>Driver vote</b>{{DRIVER_VOTE}}</div>
+      <div class="f"><b>Persona fit</b>{{PERSONA_FIT}}</div>
+      <div class="f"><b>Frequency</b>{{FREQ}}</div>
+    </div>
+    <p class="f"><b>Ad use</b>{{AD_USE}}</p>
+  </div>
+  <!-- /REPEAT: language-card -->
+  </details>
+</section>
+
+<!-- ================= T3 ================= -->
+<section id="t3">
+  <h2>Task 3: Why now <span class="tier">Strategist fuel</span></h2>
+  <p class="sub">What turned "this keeps happening" into "I'm buying today". Source: {{OWNED_OR_PUBLIC_FALLBACK}}.</p>
+  <h3>Ranked why-now patterns</h3>
+  <!-- REPEAT: pattern -->
+  <div class="card">
+    <h4>{{RANK}}. {{PATTERN_NAME}} <span class="pill {{STATUS_CLASS}}">{{INSIGHT_OR_HYPOTHESIS}}</span></h4>
+    <p>{{PATTERN_DESCRIPTION}}</p>
+    <p class="note">Frequency {{FREQ}} · Avg confidence {{CONFIDENCE}} · Resolves {{CHAIN_LINKS}} · Entries {{ENTRY_LINKS}}</p>
+  </div>
+  <!-- /REPEAT: pattern -->
+  <h3>Wildcard</h3>
+  <div class="card"><p>{{WILDCARD}}</p></div>
+
+  <details><summary>All why-now entries</summary>
+  <!-- REPEAT: why-now-entry -->
+  <div class="card" id="{{ENTRY_ID}}">
+    <span class="id">{{ENTRY_ID}}</span>
+    <h4>{{TIPPING_EVENT}}</h4>
+    <div class="grid">
+      <div class="f"><b>Last straw</b>{{LAST_STRAW}}</div>
+      <div class="f"><b>Enabling condition</b>{{ENABLING_CONDITION}}</div>
+      <div class="f"><b>Consideration span</b>{{SPAN}}</div>
+      <div class="f"><b>Objection → overcome by</b>{{OBJECTION}} → {{OVERCOME_BY}}</div>
+      <div class="f"><b>Timing</b>{{TIMING}}</div>
+      <div class="f"><b>Source · Confidence</b>{{SOURCE_TYPE}} · {{CONFIDENCE}}</div>
+    </div>
+    <blockquote>{{VERBATIM_QUOTE}}<cite><a href="{{SOURCE_URL}}">{{SOURCE_NAME}}</a></cite></blockquote>
+    <p class="note">Resolves <a class="ref" href="#{{CHAIN_ID}}">{{CHAIN_ID}}</a></p>
+  </div>
+  <!-- /REPEAT: why-now-entry -->
+  </details>
+</section>
+
+<!-- ================= T4 ================= -->
+<section id="t4">
+  <h2>Task 4: Social comparison <span class="tier">Strategist fuel</span></h2>
+  <p class="sub">Moments people share and tag friends in. Ranked at category level, with persona tags for reference.</p>
+  <h3>Category snapshot: what people are already sensitive to</h3>
+  <ul class="tight"><li>{{SNAPSHOT_BULLET}}</li></ul>
+  <h3>Moments ranked by creative energy</h3>
+  <div class="table-wrap"><table>
+    <tr><th>#</th><th>Moment</th><th>Energy</th><th>Personas</th><th>Comparison axis</th></tr>
+    <tr><td>{{RANK}}</td><td><a class="ref" href="#{{SOCIAL_ID}}">{{SOCIAL_ID}}</a> {{MOMENT}}</td><td>{{ENERGY}}/5</td><td>{{PERSONA_TAGS_OR_FLAG_NONE}}</td><td>{{AXIS}}</td></tr>
+  </table></div>
+  <h3>Validation of T1–T3</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Item</th><th>Status</th><th>Evidence</th></tr>
+    <tr><td><a class="ref" href="#{{ITEM_ID}}">{{ITEM_ID}}</a></td><td><span class="pill {{STATUS_CLASS}}">{{CONFIRMED_WEAK_CONTRADICTED}}</span></td><td>{{EVIDENCE_LINKS}}</td></tr>
+  </table></div>
+  <h3>Flags</h3>
+  <ul class="tight"><li>{{NEW_MOMENT_SENT_TO_T1_OR_NO_PERSONA_FIT}}</li></ul>
+
+  <details><summary>All social cards</summary>
+  <!-- REPEAT: social-card -->
+  <div class="card" id="{{SOCIAL_ID}}">
+    <span class="id">{{SOCIAL_ID}}</span>
+    <h4>{{MOMENT_DEPICTED}}</h4>
+    <p class="f"><b>Source</b><a href="{{SOURCE_URL}}">{{PLATFORM}} · {{CREATOR_TYPE}} · {{FORMAT}}</a> · {{DATE}}</p>
+    <blockquote>{{POST_HOOK}}</blockquote>
+    <div class="grid">
+      <div class="f"><b>Comparison axis</b>{{AXIS}}</div>
+      <div class="f"><b>Share behaviour</b>{{SHARE_BEHAVIOUR}}</div>
+      <div class="f"><b>Who tags whom</b>{{TAG_RELATIONSHIP}}</div>
+      <div class="f"><b>Engagement</b>{{ENGAGEMENT}}</div>
+      <div class="f"><b>Sentiment</b>{{SENTIMENT}}</div>
+      <div class="f"><b>Sensitivity</b>{{SENSITIVITY}}</div>
+    </div>
+    <ul class="tight"><li>"{{VERBATIM_COMMENT}}"</li></ul>
+    <p class="note">Personas: {{PERSONA_TAGS}} · Links: {{STEP_LINKS}} · Energy {{ENERGY}}/5</p>
+  </div>
+  <!-- /REPEAT: social-card -->
+  </details>
+</section>
+
+<!-- ================= METHOD ================= -->
+<section id="method">
+  <h2>Method notes</h2>
+  <div class="grid">
+    <div class="f"><b>Intensity weights</b>Language {{W_LANG}}% · Behaviour {{W_BEHAV}}% · Engagement {{W_ENG}}%</div>
+    <div class="f"><b>Why these weights</b>{{WEIGHT_REASON}}</div>
+    <div class="f"><b>Sources reached</b>{{SOURCES_REACHED}}</div>
+    <div class="f"><b>Sources supplied by user</b>{{SOURCES_SUPPLIED}}</div>
+  </div>
+  <p class="note">Quotes are verbatim. Anything inferred is labelled hypothesis. Competitor reviews not included (offered separately).</p>
+</section>
+
+</main>
+</body>
+</html>
