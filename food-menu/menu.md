@@ -62,6 +62,12 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 | celeriac | Celeriac | 1 pc (~700 g) | 15.00 | Fruit & veg |
 | marjoram | Dried marjoram | 8 g jar | 12.00 | Spices |
 | caraway | Ground caraway | 20 g jar | 12.00 | Spices |
+| sausage | Pork sausages (wienerpølser, 90%+ meat) | 250 g | 25.00 | Meat |
+| tompaste | Tomato paste | 140 g tube | 8.00 | Pantry |
+| stock | Chicken stock cubes | 6 cubes (500 ml each) | 15.00 | Pantry |
+| sunoil | Sunflower oil | 1 l bottle | 20.00 | Pantry |
+| paprika | Sweet paprika | 40 g jar | 12.00 | Spices |
+| parsley | Fresh flat-leaf parsley | 1 pot | 15.00 | Fruit & veg |
 
 ## Breakfast
 
@@ -364,6 +370,40 @@ Method:
 4. Add the other 4 potatoes, diced, and simmer about 20 min until everything is soft.
 5. Stir in the cream.
 6. Add the crushed garlic, marjoram and caraway, simmer 2–3 min more, and salt to taste.
+
+### Frankfurtská polévka
+
+- Key: frankfurtska
+- Price: 17.63
+- Description: Czech sausage and potato soup with onion, paprika, tomato and marjoram, thickened with a butter roux
+- Nutrition: 690 kcal, 15 g protein, 42 g carbs, 51 g fat
+- Nutrition note: Counts all 4 tbsp of oil from the recipe; using less cuts the fat a lot.
+- Batch note: From the Rohlík recipe. One pot makes 2 portions. Amounts are for one portion, with the whole pot in brackets. Prices of the new items are estimates.
+
+| Item | Amount | Cost | Share of pack | Shown as |
+|---|---|--:|--:|---|
+| sausage | 75 g (pot 150 g) | 7.50 |  |  |
+| potato | ~175 g (pot 350 g, waxy) | 1.58 |  |  |
+| onion | ½ onion (pot 1, ~120 g) | 1.20 |  |  |
+| garlic | ½ clove (pot 1 clove) | 0.18 |  |  |
+| tompaste | ½ tbsp (pot 1 tbsp) | 0.43 |  |  |
+| stock | 400 ml (pot 800 ml, or water) | 2.00 |  |  |
+| sunoil | 2 tbsp (pot 4 tbsp) | 0.60 |  |  |
+| butter | ~7 g (pot 15 g) | 0.75 |  |  |
+| flour | ½ tbsp (pot 1 tbsp) | 0.02 |  |  |
+| paprika | ½ tsp (pot 1 tsp) | 0.38 |  |  |
+| marjoram | ½ tsp (pot 1 tsp) | 0.38 |  |  |
+| salt + pepper | to taste | 0.11 | 0.01 | Salt & pepper |
+| parsley | 1½ tbsp chopped (pot 3 tbsp, optional) | 2.50 |  |  |
+
+Method:
+
+1. Peel the potatoes and dice them into 1 cm cubes. Finely chop the onion, crush the garlic and slice the sausages into rounds.
+2. Heat the oil in a pot and fry the sausages and onion until the onion is soft and golden.
+3. Add the potatoes, paprika, tomato paste and garlic and stir for 1 min.
+4. Pour in the stock, add the marjoram, and simmer about 15 min until the potatoes are soft.
+5. In a small pan, melt the butter, stir in the flour and cook 1–2 min. Whisk in a ladle of the soup, then stir it all back into the pot and simmer 5 min until it thickens.
+6. Season with salt and pepper and sprinkle with parsley.
 
 ## Snacks
 
