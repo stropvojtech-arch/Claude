@@ -77,8 +77,8 @@ Hours: Mornings
 - Key: yogurt
 - Price: 25.38
 - Description: Thick Thise 10% Greek-style yogurt, sliced banana, honey and crunchy organic müsli
-- Nutrition: 1000 kcal, 33 g protein, 121 g carbs, 44 g fat
-- Nutrition note: Yogurt (Thise 10%) values are from its label. Müsli values are still from the old chocolate granola and may differ a little.
+- Nutrition: 995 kcal, 32 g protein, 122 g carbs, 44 g fat
+- Nutrition note: Yogurt (Thise 10%) and müsli values are from their labels.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
