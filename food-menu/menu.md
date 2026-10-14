@@ -341,31 +341,32 @@ Method:
 ### Bramboračka
 
 - Key: bramboracka
-- Price: 9.78
-- Description: Czech potato soup with root vegetables, a splash of cream, garlic, marjoram and caraway
-- Nutrition: 350 kcal, 6 g protein, 49 g carbs, 15 g fat
-- Nutrition note: A light dinner on its own; add bread to make it more filling.
-- Batch note: One pot makes 3 portions. Amounts are for one portion, with the whole pot in brackets.
+- Price: 18.38
+- Description: Czech potato soup with root vegetables, cream, garlic, marjoram and caraway
+- Nutrition: 720 kcal, 11 g protein, 90 g carbs, 38 g fat
+- Nutrition note: Most of the fat is the 250 ml of 38% cream (about 290 kcal a portion). Estimated from what went in the pot.
+- Batch note: One pot makes 3 portions, each about one 1-litre container. Amounts are for one portion, with the whole pot in brackets.
 
 | Item | Amount | Cost | Share of pack | Shown as |
 |---|---|--:|--:|---|
 | butter | ~7 g (pot ~20 g, a knob) | 0.80 |  |  |
-| rootmix | ~70 g (pot 1 cereal bowl, ~200 g) | 1.40 |  |  |
+| rootmix | ~280 g (pot ½ celeriac, 4 carrots, 3 parsnips, ~850 g) | 5.67 |  |  |
+| sugar | a pinch (pot ~1 tsp) | 0.01 |  |  |
 | salt | a pinch | 0.01 |  |  |
 | onion | ⅓ onion (pot 1 onion) | 0.93 |  |  |
-| potato | ~200 g (pot 5 potatoes, ~600 g) | 1.80 |  |  |
-| cream | 25 ml (pot 75 ml) | 1.60 |  |  |
+| potato | ~270 g (pot ~800 g) | 2.40 |  |  |
+| cream | ~85 ml (pot 250 ml) | 5.32 |  |  |
 | garlic | ⅔ clove (pot 2 cloves) | 0.24 |  |  |
 | marjoram | ½ tbsp (pot 1½ tbsp) | 2.27 |  |  |
 | caraway | ⅓ tsp (pot 1 tsp) | 0.73 |  |  |
 
 Method:
 
-1. Dice about one cereal bowl of the root vegetable mix (carrot, parsnip or parsley root, celeriac).
-2. Melt the butter in a large pot. Add the root vegetables and a pinch of salt and soften for about 5 min.
-3. Add the chopped onion and 1 diced potato, then pour in water to cover well (about 1.25 l) and bring to a boil.
-4. Add the other 4 potatoes, diced, and simmer about 20 min until everything is soft.
-5. Stir in the cream.
+1. Peel and dice the root vegetables: ½ celeriac, 4 carrots and 3 parsnips (most of the 1 kg bag).
+2. Melt the butter in a large pot. Add the root vegetables with a pinch of salt and sugar and soften for about 5 min.
+3. Add the chopped onion and 1 diced potato, then pour in water to cover well and bring to a boil.
+4. Add the rest of the potatoes (about 800 g in all), diced, and simmer about 20 min until everything is soft.
+5. Stir in the whole 250 ml of cream.
 6. Add the crushed garlic, marjoram and caraway, simmer 2–3 min more, and salt to taste.
 
 ### Frankfurtská polévka
