@@ -111,6 +111,38 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-r
 .mast .goal{margin-top:12px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
 .daybar .sum b small{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:400}
 .left{text-align:center;font-size:13px;color:var(--muted);margin:8px 0 0}
+/* ---------- What you ate ---------- */
+.eatbar{display:grid;grid-template-columns:1fr auto;align-items:center;gap:2px 10px;width:100%;margin-top:16px;padding:10px 14px;text-align:left;
+  background:var(--card);border:1px solid var(--rule);border-radius:14px}
+.eatbar .el{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--brass)}
+.eatbar .ev{grid-column:1;font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.eatbar .ev b{font-family:var(--display);font-size:17px;font-weight:500;color:var(--ink)}
+.eatbar .meter{grid-column:1;margin:4px 0 0}
+.eatbar .chev{grid-column:2;grid-row:1/4;font-size:22px;color:var(--muted)}
+.eatme{display:block;width:100%;margin:0 0 4px;padding:12px 0;font-size:15px}
+.eh{display:flex;align-items:center;gap:8px;position:sticky;top:0;background:var(--paper);padding:8px 0;z-index:2}
+.eh h3{flex:1;margin:0;text-align:center;font-family:var(--display);font-weight:500;font-size:26px}
+.eh .chip{min-width:40px;padding:7px 12px;font-size:15px}
+.verdict{font-size:14.5px;line-height:1.5;margin:12px 0 0;padding:12px 14px;background:var(--card);border:1px solid var(--rule);border-radius:12px}
+.verdict b{font-weight:500;color:var(--accent)}
+#eatview h4{font-size:11px;letter-spacing:.24em;text-transform:uppercase;color:var(--brass);font-weight:500;margin:24px 0 6px}
+.en{font-family:var(--display);font-size:18px;font-weight:500;display:block}
+.addgrid{display:flex;flex-wrap:wrap;gap:8px}
+details.box summary{cursor:pointer;font-weight:500;color:var(--accent);font-size:14.5px}
+details.box[open] summary{margin-bottom:6px}
+.f4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.f4 .field{margin:4px 0}
+.wk{position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:6px;height:120px;align-items:end;padding-bottom:20px}
+.wk-d{position:relative;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center}
+.wk-d small{position:absolute;bottom:-18px;font-size:11px;color:var(--muted)}
+.wk-d.sel small{color:var(--ink);font-weight:500}
+.wk-bar{display:block;width:70%;min-height:2px;background:var(--rule);border-radius:4px 4px 0 0}
+.wk-bar.ok{background:var(--accent)}
+.wk-d.sel .wk-bar{outline:2px solid var(--brass);outline-offset:1px}
+.wk-goal{position:absolute;left:0;right:0;border-top:1.5px dashed var(--brass);opacity:.7;pointer-events:none;margin-bottom:20px}
+.wk-h{margin-top:28px!important}
+.dm .acts2{display:flex;gap:14px;align-items:center}
+.dm .ate{font-size:12.5px;color:var(--accent);margin-top:6px;padding:4px 0;font-weight:500}
 .dm{padding:14px 0;border-bottom:1px solid var(--rule)}
 .dm .row{display:flex;align-items:baseline;gap:8px}
 .dm .nm{font-family:var(--display);font-size:20px;font-weight:500}
@@ -214,6 +246,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-r
           <h1>Menu</h1>
           <div class="tag">Cooked to order, for one</div>
           <div class="goal" id="goal" hidden></div>
+          <button class="eatbar" id="eatbar" aria-label="What you ate today"></button>
           <div class="orn">✦</div>
         </header>
         <div id="menu"></div>
@@ -243,6 +276,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-r
 </div>
 
 <div class="dayview" id="dayview" role="dialog" aria-modal="true" aria-label="Your day"><div class="inner" id="dayInner"></div></div>
+<div class="dayview" id="eatview" role="dialog" aria-modal="true" aria-labelledby="eatTitle"><div class="inner" id="eatInner"></div></div>
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toastTxt"></span><button id="toastUndo">Undo</button></div>
 <div class="scrim" id="scrim"></div>
 <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
@@ -351,6 +385,7 @@ function openDish(id){
     return `<tr><td class="q">${esc(g.a)}</td><td>${esc(nm)}</td><td class="c">${kr(g.c)} DKK</td></tr>`}).join("");
   document.getElementById("sheetBody").innerHTML=`
     <h3 id="sheetTitle">${esc(d.name)}</h3><p class="sd">${esc(d.desc)}</p>
+    <button class="go eatme" data-ate="d:${d.id}">✓ I ate this today</button>
     ${d.nut?`<h4>Nutrition per portion · estimate</h4><div class="nut">
       <div><b>${d.nut.kcal}</b><small>kcal</small></div><div><b>${d.nut.p} g</b><small>protein</small></div>
       <div><b>${d.nut.c} g</b><small>carbs</small></div><div><b>${d.nut.f} g</b><small>fat</small></div></div>
@@ -367,7 +402,8 @@ function snackSheetHTML(){
     <div class="snack-list">${SNACKS.map(x=>{const n=st.snacks[x.id]||0;return `<div class="srow${n?" on":""}">
       <div class="sn"><div class="row"><span class="nm">${esc(x.name)}</span><span class="lead"></span><span class="pr">${kr(x.price)} <small>DKK</small></span></div>
       <small>${esc(x.pack)}</small>
-      <small>${x.est?"≈ ":""}${x.nut.kcal} kcal · ${x.nut.p} g protein · ${x.nut.c} g carbs · ${x.nut.f} g fat${x.est?" (estimate)":""}</small></div>
+      <small>${x.est?"≈ ":""}${x.nut.kcal} kcal · ${x.nut.p} g protein · ${x.nut.c} g carbs · ${x.nut.f} g fat${x.est?" (estimate)":""}</small>
+      <button class="chip" data-ate="s:${x.id}" style="margin-top:6px">✓ Ate one</button></div>
       <div class="step"><button data-snack="${x.id}" data-d="-1" aria-label="One less ${esc(x.name)}">−</button><span>${n}</span><button data-snack="${x.id}" data-d="1" aria-label="One more ${esc(x.name)}">+</button></div></div>`}).join("")}</div>`}
 let snackOpen=false;
 function openSnacks(){
@@ -412,18 +448,19 @@ function renderDayView(L,T){
      return `<div><b>${T[k].toLocaleString("en")}${u}</b><small>${lb}</small>${t?`<i class="meter${T[k]>=t?" full":""}"><i style="width:${Math.min(100,Math.round(T[k]/t*100))}%"></i></i><small class="of">of ${t.toLocaleString("en")}${u}</small>`:""}</div>`}).join("")}</div>
    ${TARGET?.kcal?`<p class="left">${T.kcal<TARGET.kcal?`Still to eat today: ${(TARGET.kcal-T.kcal).toLocaleString("en")} kcal${TARGET.p&&T.p<TARGET.p?` and ${TARGET.p-T.p} g protein`:""}.`:"Calorie goal reached for today."}</p>`:""}`;
   h+=`<button class="go" id="dayShop" style="display:block;width:100%;margin-top:12px;padding:13px 0;font-size:15px">Shop for this →</button>
-    <p class="note" style="text-align:center;margin-top:6px">Replaces your current shopping list with these meals${snackCount()?" and snacks":""}.</p>`;
+    <p class="note" style="text-align:center;margin-top:6px">Replaces your current shopping list with these meals${snackCount()?" and snacks":""}.</p>
+    <button class="chip" id="ateAll" style="display:block;width:100%;margin-top:10px;padding:11px 0;font-size:14px">✓ I ate all of this today</button>`;
   for(const s of MENU){const ds=s.dishes.filter(d=>st.day.includes(d.id));if(!ds.length)continue;
     h+=`<div class="section" style="margin-top:22px"><h2>${s.sec}</h2>`;
     for(const d of ds)h+=`<div class="dm"><div class="row"><span class="nm">${esc(d.name)}</span><span class="lead"></span><span class="pr">${kr(d.price)} <small>DKK</small></span></div>
       <div class="ds">${esc(d.desc)}</div>${d.nut?`<div class="mx">${d.nut.kcal} kcal · ${d.nut.p} g protein · ${d.nut.c} g carbs · ${d.nut.f} g fat</div>`:""}
-      <button class="rm" data-rm="${d.id}">Remove</button></div>`;
+      <div class="acts2"><button class="ate" data-ateplan="${d.id}">✓ Ate it</button><button class="rm" data-rm="${d.id}">Remove</button></div></div>`;
     h+=`</div>`}
   const SL=snackList();
   if(SL.length){h+=`<div class="section" style="margin-top:22px"><h2>Snacks</h2>`;
     for(const x of SL){const n=st.snacks[x.id];
       h+=`<div class="dm"><div class="srow2"><div style="flex:1;min-width:0"><div class="row"><span class="nm">${esc(x.name)}</span><span class="lead"></span><span class="pr">${kr(x.price*n)} <small>DKK</small></span></div>
-        <div class="ds">${n} × ${kr(x.price)} DKK</div><div class="mx">${Math.round(x.nut.kcal*n)} kcal · ${Math.round(x.nut.p*n*10)/10} g protein · ${Math.round(x.nut.c*n)} g carbs · ${Math.round(x.nut.f*n*10)/10} g fat</div></div>
+        <div class="ds">${n} × ${kr(x.price)} DKK · <button class="ate" data-atesnack="${x.id}" style="margin:0">✓ Ate ${n>1?"them":"it"}</button></div><div class="mx">${Math.round(x.nut.kcal*n)} kcal · ${Math.round(x.nut.p*n*10)/10} g protein · ${Math.round(x.nut.c*n)} g carbs · ${Math.round(x.nut.f*n*10)/10} g fat</div></div>
         <div class="step"><button data-snack="${x.id}" data-d="-1" aria-label="One less ${esc(x.name)}">−</button><span>${n}</span><button data-snack="${x.id}" data-d="1" aria-label="One more ${esc(x.name)}">+</button></div></div></div>`}
     h+=`</div>`}
   h+=`<p class="note" style="text-align:center">Meal nutrition values are estimates; snack values are from the labels where available.</p>`;
@@ -441,6 +478,99 @@ document.getElementById("dayview").addEventListener("click",e=>{const t=e.target
 renderDay();
 document.getElementById("snacksBtn").onclick=openSnacks;
 scrim.onclick=closeDish;document.getElementById("close").onclick=closeDish;
+
+/* ---- what you ate: a log per day, compared with the daily targets ----
+   st.eaten[YYYY-MM-DD] = [{id,name,n,nut:{kcal,p,c,f},ref}] — nutrition is copied in when logged,
+   so later menu edits don't rewrite past days. Synced to your private store (doc "eaten"). */
+st.eaten=st.eaten||{};
+const ymd=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const todayKey=()=>ymd(new Date());
+const shiftDay=(k,n)=>{const d=new Date(k+"T12:00:00");d.setDate(d.getDate()+n);return ymd(d)};
+const dayLabel=k=>{const t=todayKey();if(k===t)return "Today";if(k===shiftDay(t,-1))return "Yesterday";
+  return new Date(k+"T12:00:00").toLocaleDateString("en-GB",{weekday:"short",day:"numeric",month:"short"})};
+let EDOC=null,eLast="",eatOpen=false,eatDay=todayKey(),undoEat=null;
+function persistEat(){save();if(!EDOC)return;const cut=shiftDay(todayKey(),-120);
+  for(const k in st.eaten)if(k<cut||!st.eaten[k].length)delete st.eaten[k];
+  const body={days:st.eaten},j=JSON.stringify(body);if(j===eLast)return;eLast=j;EDOC.set(body).catch(()=>{eLast=""})}
+function eatTotals(k){const T={kcal:0,p:0,c:0,f:0};for(const e of st.eaten[k]||[])for(const m in T)T[m]+=(e.nut[m]||0)*e.n;
+  for(const m in T)T[m]=Math.round(T[m]);return T}
+function logEat(e,k=todayKey(),quiet){const L=(st.eaten[k]??=[]);
+  const same=L.find(x=>x.ref&&x.ref===e.ref);if(same)same.n+=e.n;else L.push({id:uid(),...e});
+  persistEat();renderEatBar();if(eatOpen)renderEat();
+  if(!quiet){undoEat={k,ref:e.ref,n:e.n,name:e.name};undoKeys=null;undoX=null;showToast(`${e.name} — logged for ${dayLabel(k).toLowerCase()}`)}}
+const dishEntry=d=>({ref:"d:"+d.id,name:d.name,n:1,nut:{...(d.nut||{kcal:0,p:0,c:0,f:0})}});
+const snackEntry=(x,n=1)=>({ref:"s:"+x.id,name:x.name,n,nut:{...x.nut}});
+document.getElementById("toastUndo").addEventListener("click",()=>{if(!undoEat)return;const {k,ref,n}=undoEat;undoEat=null;
+  const L=st.eaten[k]||[],e=L.find(x=>x.ref===ref);if(e){e.n-=n;if(e.n<=0)L.splice(L.indexOf(e),1)}persistEat();renderEatBar();if(eatOpen)renderEat()});
+
+/* the strip on the menu page */
+function meterHTML(v,t){return t?`<i class="meter${v>=t?" full":""}"><i style="width:${Math.min(100,Math.round(v/t*100))}%"></i></i>`:""}
+function renderEatBar(){const T=eatTotals(todayKey()),b=document.getElementById("eatbar");
+  b.innerHTML=`<span class="el">Eaten today</span><span class="ev"><b>${T.kcal.toLocaleString("en")}</b>${TARGET?.kcal?` / ${TARGET.kcal.toLocaleString("en")} kcal`:" kcal"} · <b>${T.p}</b>${TARGET?.p?` / ${TARGET.p} g`:" g"} protein</span>${meterHTML(T.kcal,TARGET?.kcal)}<span class="chev">›</span>`}
+
+/* how the day measures up */
+function verdict(T,k){const t=TARGET||{},out=[];if(!t.kcal)return "";
+  const n=(st.eaten[k]||[]).length,isToday=k===todayKey();
+  if(!n)return isToday?"Nothing logged yet today. Tap a dish on the menu and choose “I ate this”.":"Nothing was logged this day.";
+  const gap=t.kcal-T.kcal,pct=T.kcal/t.kcal;
+  if(pct<.9)out.push(`<b>${gap.toLocaleString("en")} kcal short</b> of your ${t.kcal.toLocaleString("en")} goal`);
+  else if(pct<=1.1)out.push(`<b>On target</b> for calories`);
+  else out.push(`<b>${(-gap).toLocaleString("en")} kcal over</b> — fine while you're gaining`);
+  if(t.p)out.push(T.p>=t.p?`protein goal hit (${T.p} g)`:`<b>${t.p-T.p} g protein</b> to go`);
+  if(t.f&&T.f>t.f*1.3)out.push(`fat is high (${T.f} g of ${t.f} g)`);
+  let s=out.join(" · ")+".";
+  if(isToday&&pct<.9){const opts=[...DISHES.filter(d=>d.nut).map(d=>({nm:d.name,kcal:d.nut.kcal,p:d.nut.p})),...SNACKS.map(x=>({nm:x.name,kcal:x.nut.kcal,p:x.nut.p}))];
+    const fit=opts.filter(o=>o.kcal<=gap+150).sort((a,b)=>(b.kcal+b.p*4)-(a.kcal+a.p*4))[0];
+    if(fit)s+=` A <b>${esc(fit.nm)}</b> (${fit.kcal} kcal, ${fit.p} g protein) would ${fit.kcal>=gap-100?"close the gap":"help"}.`}
+  return s}
+function weekHTML(k){const t=TARGET?.kcal||0,days=[...Array(7)].map((_,i)=>shiftDay(k,i-6)),vals=days.map(d=>eatTotals(d).kcal);
+  const top=Math.max(t*1.25,...vals,1);
+  return `<h4 class="wk-h">Last 7 days</h4><div class="wk">${t?`<span class="wk-goal" style="bottom:${t/top*100}%"></span>`:""}${days.map((d,i)=>`<button class="wk-d${d===k?" sel":""}" data-eday="${d}" aria-label="${dayLabel(d)}: ${vals[i]} kcal" ${d>todayKey()?"disabled":""}>
+    <span class="wk-bar${t&&vals[i]>=t*.9?" ok":""}" style="height:${vals[i]/top*100}%"></span><small>${new Date(d+"T12:00:00").toLocaleDateString("en-GB",{weekday:"narrow"})}</small></button>`).join("")}</div>
+    ${t?`<p class="note" style="margin-top:6px;text-align:center">Line = ${t.toLocaleString("en")} kcal goal. Green = within 10% of it or above.</p>`:""}`}
+function renderEat(){const k=eatDay,T=eatTotals(k),L=st.eaten[k]||[],isToday=k===todayKey();
+  let h=`<div class="eh"><button class="chip" data-eshift="-1" aria-label="Previous day">‹</button><h3 id="eatTitle">${dayLabel(k)}</h3>
+    <button class="chip" data-eshift="1" aria-label="Next day" ${isToday?"disabled":""}>›</button><button class="chip solid" id="eatClose">Done</button></div>
+    <div class="macros4">${[["kcal","kcal",""],["p","protein"," g"],["c","carbs"," g"],["f","fat"," g"]].map(([m,lb,u])=>{const t=TARGET?.[m];
+      return `<div><b>${T[m].toLocaleString("en")}${u}</b><small>${lb}</small>${meterHTML(T[m],t)}${t?`<small class="of">of ${t.toLocaleString("en")}${u}</small>`:""}</div>`}).join("")}</div>
+    <p class="verdict">${verdict(T,k)}</p>`;
+  h+=`<h4>Eaten</h4>`;
+  h+=L.length?L.map(e=>`<div class="srow"><div class="sn"><b class="en">${esc(e.name)}</b><small>${Math.round(e.nut.kcal*e.n)} kcal · ${Math.round(e.nut.p*e.n)} g protein · ${Math.round(e.nut.c*e.n)} g carbs · ${Math.round(e.nut.f*e.n)} g fat</small></div>
+      <div class="step"><button data-ebump="${e.id}" data-d="-1" aria-label="One less ${esc(e.name)}">−</button><span>${e.n}</span><button data-ebump="${e.id}" data-d="1" aria-label="One more ${esc(e.name)}">+</button></div></div>`).join("")
+    :`<div class="empty">Nothing logged ${isToday?"yet":"for this day"}. Add what you ate below.</div>`;
+  h+=`<h4>Add from the menu</h4><div class="addgrid">${MENU.map(s=>s.dishes.map(d=>`<button class="chip" data-eadd="d:${d.id}">${esc(d.name)}</button>`).join("")).join("")}${SNACKS.map(x=>`<button class="chip" data-eadd="s:${x.id}">${esc(x.name)}</button>`).join("")}</div>`;
+  h+=`<details class="box"><summary>Something not on the menu</summary>
+    <label class="field"><span>What was it</span><input id="eName" placeholder="e.g. Kebab" autocomplete="off"></label>
+    <div class="f4"><label class="field"><span>kcal</span><input id="eKcal" inputmode="numeric"></label><label class="field"><span>Protein g</span><input id="eP" inputmode="decimal"></label>
+    <label class="field"><span>Carbs g</span><input id="eC" inputmode="decimal"></label><label class="field"><span>Fat g</span><input id="eF" inputmode="decimal"></label></div>
+    <p class="note" style="margin:0">Only the name and kcal are needed. Guess if you don't know.</p>
+    <div class="acts"><button class="chip solid" id="eSave">Add to ${dayLabel(k).toLowerCase()}</button></div><p class="status err" id="eErr" style="margin-left:0"></p></details>`;
+  h+=weekHTML(k);
+  document.getElementById("eatInner").innerHTML=h;
+}
+function openEat(k=todayKey()){eatDay=k;eatOpen=true;renderEat();const v=document.getElementById("eatview");v.scrollTop=0;v.classList.add("on");document.getElementById("eatClose")?.focus({preventScroll:true})}
+function closeEat(){eatOpen=false;document.getElementById("eatview").classList.remove("on")}
+document.getElementById("eatbar").onclick=()=>openEat();
+document.getElementById("eatview").addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+  if(t.id==="eatClose")return closeEat();
+  if(t.dataset.eshift){const n=shiftDay(eatDay,+t.dataset.eshift);if(n<=todayKey()){eatDay=n;renderEat()}return}
+  if(t.dataset.eday){eatDay=t.dataset.eday;renderEat();return}
+  if(t.dataset.eadd){const [kind,id]=t.dataset.eadd.split(":");const x=kind==="d"?byId[id]:snackById[id];if(x)logEat(kind==="d"?dishEntry(x):snackEntry(x),eatDay);return}
+  if(t.dataset.ebump){const L=st.eaten[eatDay]||[],x=L.find(z=>z.id===t.dataset.ebump);if(!x)return;x.n+= +t.dataset.d;if(x.n<=0)L.splice(L.indexOf(x),1);persistEat();renderEatBar();renderEat();return}
+  if(t.id==="eSave"){const g=id=>document.getElementById(id).value.trim().replace(",","."),name=g("eName"),kcal=parseFloat(g("eKcal"));
+    if(!name||!(kcal>=0)){document.getElementById("eErr").textContent="Add a name and the calories (a guess is fine).";return}
+    const v=id=>{const x=parseFloat(g(id));return x>=0?x:0};logEat({ref:"x:"+uid(),name,n:1,nut:{kcal:Math.round(kcal),p:v("eP"),c:v("eC"),f:v("eF")}},eatDay)}});
+addEventListener("keydown",e=>{if(eatOpen&&e.key==="Escape"){closeEat();e.stopImmediatePropagation()}else if(eatOpen)e.stopImmediatePropagation()});
+/* "I ate this" from a dish card, a snack row, or the day plan */
+document.getElementById("sheetBody").addEventListener("click",e=>{const t=e.target.closest("[data-ate]");if(!t)return;
+  const [kind,id]=t.dataset.ate.split(":");const x=kind==="d"?byId[id]:snackById[id];if(!x)return;
+  logEat(kind==="d"?dishEntry(x):snackEntry(x));if(kind==="d")closeDish()});
+document.getElementById("dayview").addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
+  if(t.dataset.ateplan){const x=byId[t.dataset.ateplan];if(x)logEat(dishEntry(x))}
+  else if(t.dataset.atesnack){const x=snackById[t.dataset.atesnack];if(x)logEat(snackEntry(x,st.snacks[x.id]||1))}
+  else if(t.id==="ateAll"){for(const d of dayList())logEat(dishEntry(d),todayKey(),true);for(const x of snackList())logEat(snackEntry(x,st.snacks[x.id]),todayKey(),true);
+    closeDay();openEat()}});
+renderEatBar();
 
 /* ---- shopping maths ---- */
 function needs(){
@@ -674,7 +804,16 @@ function applyResult(d){
 (async()=>{
   let db,user;try{[db,user]=await Promise.all([claude.use("db"),claude.use("user")])}catch(e){return}
   if(!db||!user)return;let id;try{id=await user.id()}catch(e){return}if(!id)return;
-  const col=db.collection("data/users/"+id);DOC=col.doc("menu");
+  const col=db.collection("data/users/"+id);DOC=col.doc("menu");EDOC=col.doc("eaten");
+  let eFirst=true;
+  EDOC.onSnapshot(s=>{
+    if(eFirst){eFirst=false;if(!s.exists){eLast="";persistEat();return}}   // first time: upload this device's log
+    if(!s.exists)return;const days=(s.data()||{}).days||{};
+    // merge: the store wins per day, days only this device has are kept and uploaded
+    let extra=false;for(const k in st.eaten)if(!days[k]&&st.eaten[k].length){days[k]=st.eaten[k];extra=true}
+    st.eaten=JSON.parse(JSON.stringify(days));save();eLast=extra?"":JSON.stringify({days:st.eaten});if(extra)persistEat();
+    renderEatBar();if(eatOpen&&document.activeElement?.tagName!=="INPUT")renderEat();
+  },()=>{});
   let first=true;
   DOC.onSnapshot(s=>{
     if(first){first=false;
