@@ -10,6 +10,16 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 - The method is the numbered list under each dish.
 - Don't use the `|` character inside table cells.
 
+## Daily targets
+
+For gaining weight: 178 cm (5'10"), 62 kg now, goal 75 kg. Aim to gain about 0.25–0.5 kg a week. The day planner compares your picked meals and snacks against these numbers.
+
+- Calories: 2,900 kcal
+- Protein: 125 g
+- Carbs: 390 g
+- Fat: 90 g
+- Note: Maintenance is about 2,500 kcal a day if you're moderately active; this adds ~400 kcal for a slow, mostly-muscle gain. If the scale hasn't moved after 2 weeks, add 200 kcal.
+
 ## Store items
 
 | Key | Product | Pack | Pack price | Aisle |

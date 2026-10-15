@@ -104,6 +104,13 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-r
 .macros4 div{background:var(--card);border:1px solid var(--rule);border-radius:12px;padding:10px 4px;text-align:center}
 .macros4 b{display:block;font-family:var(--display);font-weight:500;font-size:19px}
 .macros4 small{font-size:11px;letter-spacing:.06em;color:var(--muted)}
+.macros4 .of{display:block;font-size:10.5px;margin-top:1px}
+.meter{display:block;height:4px;border-radius:2px;background:var(--rule);margin:7px 10px 3px;overflow:hidden}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.meter.full i{background:var(--brass)}
+.mast .goal{margin-top:12px;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent)}
+.daybar .sum b small{font-family:var(--body);font-size:12px;color:var(--muted);font-weight:400}
+.left{text-align:center;font-size:13px;color:var(--muted);margin:8px 0 0}
 .dm{padding:14px 0;border-bottom:1px solid var(--rule)}
 .dm .row{display:flex;align-items:baseline;gap:8px}
 .dm .nm{font-family:var(--display);font-size:20px;font-weight:500}
@@ -206,6 +213,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-r
           <div class="est">Aarhus · Est. 2026</div>
           <h1>Menu</h1>
           <div class="tag">Cooked to order, for one</div>
+          <div class="goal" id="goal" hidden></div>
           <div class="orn">✦</div>
         </header>
         <div id="menu"></div>
@@ -252,7 +260,7 @@ button:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-r
 function parseMenu(md){
   const num=s=>{const v=parseFloat(String(s).replace(",","."));return isNaN(v)?null:v};
   const cells=l=>l.trim().replace(/^\||\|$/g,"").split("|").map(c=>c.trim());
-  const ITEMS={},MENU=[],SNACKS=[];
+  const ITEMS={},MENU=[],SNACKS=[];let TARGET=null;
   let h2="",sec=null,dish=null,tbl=null;
   const lines=md.split(/\r?\n/);
   for(let n=0;n<lines.length;n++){
@@ -268,7 +276,11 @@ function parseMenu(md){
     let m;
     if(m=t.match(/^###\s+(.+)/)){if(!sec)continue;dish={name:m[1].trim(),id:"",price:0,desc:"",ing:[],steps:[]};sec.dishes.push(dish);continue}
     if(m=t.match(/^##\s+(.+)/)){h2=m[1].trim();dish=null;
-      sec=/^(store items|snacks)$/i.test(h2)?null:{sec:h2,hours:"",dishes:[]};if(sec)MENU.push(sec);continue}
+      sec=/^(store items|snacks|daily targets)$/i.test(h2)?null:{sec:h2,hours:"",dishes:[]};if(sec)MENU.push(sec);continue}
+    if(/^daily targets$/i.test(h2)&&(m=t.match(/^[-*]\s*([^:]+):\s*(.*)/))){
+      const k=m[1].trim().toLowerCase(),v=m[2].trim(),x={calories:"kcal",protein:"p",carbs:"c",fat:"f"}[k];TARGET??={};
+      if(x)TARGET[x]=num(v.replace(/[^\d.,]/g,"").replace(/,(?=\d{3})/g,""));else if(k==="note")TARGET.note=v;
+      continue}
     if(sec&&!dish&&(m=t.match(/^hours:\s*(.*)/i))){sec.hours=m[1];continue}
     if(dish&&(m=t.match(/^[-*]\s*([^:]+):\s*(.*)/))){
       const k=m[1].trim().toLowerCase(),v=m[2].trim();
@@ -291,13 +303,14 @@ function parseMenu(md){
       const g={i:r.item.split("+").map(s=>s.trim()).join("|"),a:r.amount,c:num(r.cost)};
       if(r["shown as"])g.n=r["shown as"];if(num(r["share of pack"])!=null)g.f=num(r["share of pack"]);dish.ing.push(g)}
   }
-  return {ITEMS,MENU,SNACKS};
+  return {ITEMS,MENU,SNACKS,TARGET};
 }
 
 (async()=>{
-let ITEMS,MENU,SNACKS;
-try{const r=await fetch("menu.md",{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);({ITEMS,MENU,SNACKS}=parseMenu(await r.text()))}
+let ITEMS,MENU,SNACKS,TARGET;
+try{const r=await fetch("menu.md",{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);({ITEMS,MENU,SNACKS,TARGET}=parseMenu(await r.text()))}
 catch(e){document.getElementById("menu").innerHTML=`<p class="note" style="text-align:center">Couldn't load the menu data (menu.md). Reload the page to try again.</p>`;return}
+if(TARGET?.kcal){const g=document.getElementById("goal");g.textContent=`Daily goal · ${TARGET.kcal.toLocaleString("en")} kcal${TARGET.p?` · ${TARGET.p} g protein`:""}`;g.hidden=false}
 const snackById=Object.fromEntries(SNACKS.map(x=>[x.id,x]));
 for(const x of SNACKS)ITEMS["s_"+x.id]=[x.name,x.buy,x.packPrice,"Snacks"];
 const DISHES=MENU.flatMap(s=>s.dishes);
@@ -381,7 +394,7 @@ function dayTotals(L){const T=dayMeals(L);for(const x of snackList()){const n=st
   for(const k of ["kcal","p","c","f"])T[k]=Math.round(T[k]);return T}
 function dayMeals(L){return L.reduce((t,d)=>({price:t.price+d.price,kcal:t.kcal+(d.nut?.kcal||0),p:t.p+(d.nut?.p||0),c:t.c+(d.nut?.c||0),f:t.f+(d.nut?.f||0)}),{price:0,kcal:0,p:0,c:0,f:0})}
 function barHTML(L,T){const sc=snackCount(),parts=[];if(L.length)parts.push(`${L.length} meal${L.length===1?"":"s"}`);if(sc)parts.push(`${sc} snack${sc===1?"":"s"}`);
-  return `<span class="sum">${parts.join(" · ")} · ${T.p} g protein<b>${T.kcal.toLocaleString("en")} kcal</b></span>
+  return `<span class="sum">${parts.join(" · ")} · ${T.p} g protein<b>${T.kcal.toLocaleString("en")} ${TARGET?.kcal?`<small>of ${TARGET.kcal.toLocaleString("en")} kcal</small>`:"kcal"}</b></span>
   <span class="pr2">total<b>${kr(T.price)} DKK</b></span><span class="chev">▲</span>`}
 let dayOpen=false;
 function renderDay(){
@@ -395,7 +408,9 @@ function renderDay(){
 }
 function renderDayView(L,T){
   let h=`<button class="daybar" id="dayClose" aria-label="Close your day">${barHTML(L,T)}</button>
-   <div class="macros4"><div><b>${T.kcal}</b><small>kcal</small></div><div><b>${T.p} g</b><small>protein</small></div><div><b>${T.c} g</b><small>carbs</small></div><div><b>${T.f} g</b><small>fat</small></div></div>`;
+   <div class="macros4">${[["kcal","kcal",""],["p","protein"," g"],["c","carbs"," g"],["f","fat"," g"]].map(([k,lb,u])=>{const t=TARGET?.[k];
+     return `<div><b>${T[k].toLocaleString("en")}${u}</b><small>${lb}</small>${t?`<i class="meter${T[k]>=t?" full":""}"><i style="width:${Math.min(100,Math.round(T[k]/t*100))}%"></i></i><small class="of">of ${t.toLocaleString("en")}${u}</small>`:""}</div>`}).join("")}</div>
+   ${TARGET?.kcal?`<p class="left">${T.kcal<TARGET.kcal?`Still to eat today: ${(TARGET.kcal-T.kcal).toLocaleString("en")} kcal${TARGET.p&&T.p<TARGET.p?` and ${TARGET.p-T.p} g protein`:""}.`:"Calorie goal reached for today."}</p>`:""}`;
   h+=`<button class="go" id="dayShop" style="display:block;width:100%;margin-top:12px;padding:13px 0;font-size:15px">Shop for this →</button>
     <p class="note" style="text-align:center;margin-top:6px">Replaces your current shopping list with these meals${snackCount()?" and snacks":""}.</p>`;
   for(const s of MENU){const ds=s.dishes.filter(d=>st.day.includes(d.id));if(!ds.length)continue;
