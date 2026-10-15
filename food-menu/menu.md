@@ -12,13 +12,17 @@ The data behind the Food Menu artifact. Edit this file and republish; the page r
 
 ## Daily targets
 
-For gaining weight: 178 cm (5'10"), 62 kg now, goal 75 kg. Aim to gain about 0.25–0.5 kg a week. The day planner compares your picked meals and snacks against these numbers.
+Targets follow your **current** weight, not the goal: what keeps you steady at today’s weight, plus a small surplus for a slow bulk. As your weight goes up (update it in the page’s “Today” view), the targets rise with it. Calories use the Mifflin–St Jeor formula for a man, times the activity factor.
 
-- Calories: 2,900 kcal
-- Protein: 125 g
-- Carbs: 390 g
-- Fat: 90 g
-- Note: Maintenance is about 2,500 kcal a day if you're moderately active; this adds ~400 kcal for a slow, mostly-muscle gain. If the scale hasn't moved after 2 weeks, add 200 kcal.
+- Height: 178 cm
+- Age: 25
+- Current weight: 62 kg
+- Goal weight: 75 kg
+- Activity: 1.5
+- Surplus: 250 kcal
+- Protein per kg: 1.8
+- Fat per kg: 1.1
+- Note: Aim for about 0.25 kg a week. If the scale hasn’t moved in 2 weeks, raise the surplus by 150 kcal; if you gain more than 0.5 kg a week, lower it.
 
 ## Store items
 

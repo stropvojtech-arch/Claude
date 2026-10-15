@@ -142,6 +142,10 @@ details.box[open] summary{margin-bottom:6px}
 .wk-goal{position:absolute;left:0;right:0;border-top:1.5px dashed var(--brass);opacity:.7;pointer-events:none;margin-bottom:20px}
 .wk-h{margin-top:28px!important}
 .dm .acts2{display:flex;gap:14px;align-items:center}
+.wbox p{color:var(--ink)!important}
+.wrow{display:flex;gap:10px;align-items:flex-end}
+.wrow .field{flex:1;margin:4px 0 0}
+.wrow .chip{padding:11px 18px;font-size:14px}
 .dm .ate{font-size:12.5px;color:var(--accent);margin-top:6px;padding:4px 0;font-weight:500}
 .dm{padding:14px 0;border-bottom:1px solid var(--rule)}
 .dm .row{display:flex;align-items:baseline;gap:8px}
@@ -312,8 +316,8 @@ function parseMenu(md){
     if(m=t.match(/^##\s+(.+)/)){h2=m[1].trim();dish=null;
       sec=/^(store items|snacks|daily targets)$/i.test(h2)?null:{sec:h2,hours:"",dishes:[]};if(sec)MENU.push(sec);continue}
     if(/^daily targets$/i.test(h2)&&(m=t.match(/^[-*]\s*([^:]+):\s*(.*)/))){
-      const k=m[1].trim().toLowerCase(),v=m[2].trim(),x={calories:"kcal",protein:"p",carbs:"c",fat:"f"}[k];TARGET??={};
-      if(x)TARGET[x]=num(v.replace(/[^\d.,]/g,"").replace(/,(?=\d{3})/g,""));else if(k==="note")TARGET.note=v;
+      const k=m[1].trim().toLowerCase(),v=m[2].trim();TARGET??={};
+      if(k==="note")TARGET.note=v;else TARGET[k]=num(v.replace(/[^\d.,]/g,"").replace(/,(?=\d{3})/g,""));
       continue}
     if(sec&&!dish&&(m=t.match(/^hours:\s*(.*)/i))){sec.hours=m[1];continue}
     if(dish&&(m=t.match(/^[-*]\s*([^:]+):\s*(.*)/))){
@@ -344,7 +348,14 @@ function parseMenu(md){
 let ITEMS,MENU,SNACKS,TARGET;
 try{const r=await fetch("menu.md",{cache:"no-store"});if(!r.ok)throw new Error("HTTP "+r.status);({ITEMS,MENU,SNACKS,TARGET}=parseMenu(await r.text()))}
 catch(e){document.getElementById("menu").innerHTML=`<p class="note" style="text-align:center">Couldn't load the menu data (menu.md). Reload the page to try again.</p>`;return}
-if(TARGET?.kcal){const g=document.getElementById("goal");g.textContent=`Daily goal · ${TARGET.kcal.toLocaleString("en")} kcal${TARGET.p?` · ${TARGET.p} g protein`:""}`;g.hidden=false}
+/* daily targets from the profile in menu.md and your current weight (updated in the Today view) */
+const PROFILE=TARGET;
+function calcTargets(w){const P=PROFILE;if(!P||!w||!P.height)return null;
+  const bmr=10*w+6.25*P.height-5*(P.age||25)+5,kcal=Math.round((bmr*(P.activity||1.5)+(P.surplus??250))/10)*10;
+  const p=Math.round(w*(P["protein per kg"]||1.8)),f=Math.round(w*(P["fat per kg"]||1)),c=Math.round((kcal-p*4-f*9)/4);
+  return {kcal,p,c,f,w,goal:P["goal weight"],note:P.note}}
+function applyTargets(){TARGET=calcTargets(st.weight?.kg||PROFILE?.["current weight"]);const g=document.getElementById("goal");
+  g.hidden=!TARGET;if(TARGET)g.textContent=`Daily goal · ${TARGET.kcal.toLocaleString("en")} kcal · ${TARGET.p} g protein · for ${TARGET.w} kg`}
 const snackById=Object.fromEntries(SNACKS.map(x=>[x.id,x]));
 for(const x of SNACKS)ITEMS["s_"+x.id]=[x.name,x.buy,x.packPrice,"Snacks"];
 const DISHES=MENU.flatMap(s=>s.dishes);
@@ -367,6 +378,7 @@ const money=e=>`${e.est?"≈ ":""}`;
 const KEY="bistro-strop-v1";
 let st={page:0,mode:"plan",portions:{},home:{},adj:{},got:{},alts:{},sel:{},day:[],snacks:{},sbuy:{},group:"meal",gotM:{},extra:[]};
 try{const s=JSON.parse(localStorage.getItem(KEY));if(s)st=Object.assign(st,s)}catch(e){}
+applyTargets();
 st.snacks=st.snacks||{};st.day=st.day||[];st.sbuy=st.sbuy||{};st.gotM=st.gotM||{};st.group=st.group||"meal";st.extra=st.extra||[];
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}};
 
@@ -491,7 +503,7 @@ const dayLabel=k=>{const t=todayKey();if(k===t)return "Today";if(k===shiftDay(t,
 let EDOC=null,eLast="",eatOpen=false,eatDay=todayKey(),undoEat=null;
 function persistEat(){save();if(!EDOC)return;const cut=shiftDay(todayKey(),-120);
   for(const k in st.eaten)if(k<cut||!st.eaten[k].length)delete st.eaten[k];
-  const body={days:st.eaten},j=JSON.stringify(body);if(j===eLast)return;eLast=j;EDOC.set(body).catch(()=>{eLast=""})}
+  const body={days:st.eaten,weight:st.weight||null},j=JSON.stringify(body);if(j===eLast)return;eLast=j;EDOC.set(body).catch(()=>{eLast=""})}
 function eatTotals(k){const T={kcal:0,p:0,c:0,f:0};for(const e of st.eaten[k]||[])for(const m in T)T[m]+=(e.nut[m]||0)*e.n;
   for(const m in T)T[m]=Math.round(T[m]);return T}
 function logEat(e,k=todayKey(),quiet){const L=(st.eaten[k]??=[]);
@@ -545,6 +557,11 @@ function renderEat(){const k=eatDay,T=eatTotals(k),L=st.eaten[k]||[],isToday=k==
     <label class="field"><span>Carbs g</span><input id="eC" inputmode="decimal"></label><label class="field"><span>Fat g</span><input id="eF" inputmode="decimal"></label></div>
     <p class="note" style="margin:0">Only the name and kcal are needed. Guess if you don't know.</p>
     <div class="acts"><button class="chip solid" id="eSave">Add to ${dayLabel(k).toLowerCase()}</button></div><p class="status err" id="eErr" style="margin-left:0"></p></details>`;
+  if(TARGET){const w=TARGET.w,g=TARGET.goal,up=st.weight?.at;
+    h+=`<h4>Your weight</h4><div class="box wbox"><p><b>${w} kg</b> now${g?` · goal ${g} kg${g>w?` (${Math.round((g-w)*10)/10} kg to go)`:""}`:""}${up?` · updated ${dayLabel(up).toLowerCase()}`:""}.
+      Targets are set for this weight and go up as you gain. Weigh yourself once a week, in the morning, and update it here.</p>
+      <div class="wrow"><label class="field"><span>Weight in kg</span><input id="wIn" inputmode="decimal" value="${w}"></label><button class="chip solid" id="wSave">Update</button></div>
+      ${TARGET.note?`<p class="note" style="margin:6px 0 0">${esc(TARGET.note)}</p>`:""}</div>`}
   h+=weekHTML(k);
   document.getElementById("eatInner").innerHTML=h;
 }
@@ -553,6 +570,9 @@ function closeEat(){eatOpen=false;document.getElementById("eatview").classList.r
 document.getElementById("eatbar").onclick=()=>openEat();
 document.getElementById("eatview").addEventListener("click",e=>{const t=e.target.closest("button");if(!t)return;
   if(t.id==="eatClose")return closeEat();
+  if(t.id==="wSave"){const v=parseFloat(document.getElementById("wIn").value.replace(",","."));if(!(v>=30&&v<=250)){document.getElementById("wIn").focus();return}
+    st.weight={kg:Math.round(v*10)/10,at:todayKey()};applyTargets();persistEat();renderEatBar();renderDay();renderEat();
+    undoEat=null;undoKeys=null;undoX=null;showToast(`Targets updated for ${st.weight.kg} kg: ${TARGET.kcal.toLocaleString("en")} kcal`);return}
   if(t.dataset.eshift){const n=shiftDay(eatDay,+t.dataset.eshift);if(n<=todayKey()){eatDay=n;renderEat()}return}
   if(t.dataset.eday){eatDay=t.dataset.eday;renderEat();return}
   if(t.dataset.eadd){const [kind,id]=t.dataset.eadd.split(":");const x=kind==="d"?byId[id]:snackById[id];if(x)logEat(kind==="d"?dishEntry(x):snackEntry(x),eatDay);return}
@@ -808,10 +828,11 @@ function applyResult(d){
   let eFirst=true;
   EDOC.onSnapshot(s=>{
     if(eFirst){eFirst=false;if(!s.exists){eLast="";persistEat();return}}   // first time: upload this device's log
-    if(!s.exists)return;const days=(s.data()||{}).days||{};
+    if(!s.exists)return;const sd=s.data()||{},days=sd.days||{};
+    if(sd.weight&&(!st.weight||sd.weight.at>=st.weight.at))st.weight=sd.weight;applyTargets();renderDay();
     // merge: the store wins per day, days only this device has are kept and uploaded
     let extra=false;for(const k in st.eaten)if(!days[k]&&st.eaten[k].length){days[k]=st.eaten[k];extra=true}
-    st.eaten=JSON.parse(JSON.stringify(days));save();eLast=extra?"":JSON.stringify({days:st.eaten});if(extra)persistEat();
+    st.eaten=JSON.parse(JSON.stringify(days));save();eLast=extra?"":JSON.stringify({days:st.eaten,weight:st.weight||null});if(extra)persistEat();
     renderEatBar();if(eatOpen&&document.activeElement?.tagName!=="INPUT")renderEat();
   },()=>{});
   let first=true;
